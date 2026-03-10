@@ -50,29 +50,28 @@
 </div>
 
 <script>
-    // 1. Pega o link do PDF que o Mercado Pago vai enviar na URL (?pdf=LINK)
-    function getParam(name) {
-        return new URLSearchParams(window.location.search).get(name);
-    }
-
-    const pdfUrl = getParam('pdf');
+    // Agora pegamos o link que salvamos na memória do navegador antes da compra
+    const pdfUrl = localStorage.getItem('pdf_pendente');
     const area = document.getElementById('download-area');
 
-    if (pdfUrl) {
+    if (pdfUrl && pdfUrl !== 'undefined') {
         area.innerHTML = `
             <a href="${pdfUrl}" target="_blank" download class="btn-download">
                📥 BAIXAR MATERIAL (PDF)
             </a>
         `;
     } else {
-        area.innerHTML = `<p style="color:#e74c3c; font-weight:600;">Link não encontrado. Use o botão do WhatsApp abaixo para suporte!</p>`;
+        area.innerHTML = `<p style="color:#e74c3c; font-weight:600;">Link não encontrado no navegador. Use o botão do WhatsApp abaixo!</p>`;
     }
 
-    // 2. AVISO PARA NÃO FECHAR SEM BAIXAR
+    // Limpa a memória para a próxima compra
+    // localStorage.removeItem('pdf_pendente'); 
+
     window.onbeforeunload = function() {
-        return "Você já baixou seu PDF? Não saia sem baixar!";
+        return "Você já baixou seu PDF?";
     };
 </script>
 
 </body>
 </html>
+
