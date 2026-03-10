@@ -3,105 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corujices Pedagógicas</title>
+    <title>Corujices Pedagógicas | Loja Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ESTILOS BASE PROFISSIONAIS */
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-        body { background:#f6f8ff; color:#333; }
-        header { background:white; padding:15px 6%; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:999; }
-        .logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#333; }
-        .logo img { height:55px; }
-        .logo h1 { font-size:20px; font-weight:700; }
-        .menu { display:flex; gap:20px; align-items:center; }
-        .user-info { display:none; align-items:center; gap:15px; font-size:14px; color:#666; }
-        .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:8px 18px; border-radius:25px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; }
-        .btn-sair { background:#ff7675; color:white; padding:5px 12px; border-radius:15px; cursor:pointer; font-size:11px; border:none; }
+        body { background:#f0f2f5; color:#1a1a1a; }
         
-        .hero { text-align:center; padding:60px 6% 30px; }
-        .hero h2 { font-size:32px; font-weight:700; margin-bottom:15px; }
+        header { background:white; padding:15px 6%; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:1000; }
+        .logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:#333; }
+        .logo img { height:50px; }
         
-        .search-container { max-width: 500px; margin: 20px auto; position: relative; }
-        .search-container input { width: 100%; padding: 15px 20px; border-radius: 30px; border: 1px solid #ddd; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:10px 22px; border-radius:30px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; transition: 0.3s; }
         
-        .categories-menu { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom: 30px; padding: 0 6%; }
-        .cat-btn { background:white; padding:8px 18px; border-radius:20px; cursor:pointer; font-size:13px; border: 1px solid #eee; transition: 0.3s; }
-        .cat-btn.active, .cat-btn:hover { background:#6c5ce7; color:white; border-color: #6c5ce7; }
+        .hero { text-align:center; padding:60px 6% 30px; background: white; }
+        .search-container { max-width: 600px; margin: 20px auto; }
+        .search-container input { width: 100%; padding: 18px 25px; border-radius: 35px; border: 2px solid #eee; outline: none; }
 
-        .store { max-width:1200px; margin:auto; padding:20px 6% 40px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
-        .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; }
-        .card:hover { transform:translateY(-6px); }
-        .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; cursor: pointer; }
-        .info { padding:18px; }
-        .price { font-weight:700; color:#6c5ce7; font-size:18px; }
-        .btn-buy { background:#00b894; color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-size:13px; border:none; cursor:pointer; display:inline-block; font-weight:600; }
-        
-        .admin-zone { display: none; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; justify-content: space-between; align-items:center; }
-        .btn-adm { font-size: 11px; cursor: pointer; font-weight: bold; border: none; background: none; text-transform: uppercase; }
+        .store { max-width:1200px; margin:auto; padding:40px 6%; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; }
+        .card { background:white; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.05); transition:0.4s; }
+        .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; }
+        .info { padding:20px; }
+        .price { font-size:22px; font-weight:700; color:#2d3436; }
+        .btn-buy { background:#00b894; color:white; padding:12px 25px; border-radius:30px; border:none; cursor:pointer; font-weight:700; }
 
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
-        .modal-content { background:white; padding:30px; width:90%; max-width:500px; border-radius:10px; max-height: 90vh; overflow-y: auto; position: relative; }
-        .close { position:absolute; top:10px; right:15px; font-size:25px; cursor:pointer; color:#999; }
-        input, textarea, select { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px; }
-        label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; }
-        footer { text-align:center; padding:40px; font-size:14px; color:#777; }
+        /* MODAIS */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000; backdrop-filter: blur(5px); }
+        .modal-content { background:white; padding:40px; width:95%; max-width:450px; border-radius:20px; position: relative; text-align:center; }
+        input, textarea { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px; }
+        
+        .admin-zone { display: none; padding: 15px; background: #f8f9fa; border-top: 1px solid #eee; justify-content: space-between; }
+        .btn-adm { font-size: 11px; cursor: pointer; font-weight: 700; border: none; background: none; color: #b2bec3; }
+
+        #aviso-pendente { display:none; background:#6c5ce7; color:white; text-align:center; padding:10px; font-weight:600; cursor:pointer; }
     </style>
 </head>
 <body>
 
+<div id="aviso-pendente" onclick="window.location.href='sucesso.html'">
+    🦉 Notamos um material pronto para download! Clique aqui para baixar.
+</div>
+
 <header>
-    <a href="javascript:void(0)" class="logo" onclick="location.reload()">
-        <img src="coruja.png" alt="Logo Corujices">
-        <h1>Corujices Pedagógicas</h1>
+    <a href="index.html" class="logo">
+        <img src="coruja.png">
+        <h1>Corujices</h1>
     </a>
     <div class="menu">
-        <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Acesso Vendedor</button>
-        <div id="user-logged-view" class="user-info">
-            <span id="user-email"></span>
-            <button class="btn-anunciar" onclick="abrirModal()">+ Inserir Anúncio</button>
-            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Vendedor</button>
+        <div id="user-logged-view" class="user-info" style="display:none;">
+            <button class="btn-anunciar" onclick="abrirModalCadastro()">+ Novo Material</button>
+            <button onclick="fazerLogout()" style="background:none; border:none; color:#ff7675; cursor:pointer; margin-left:10px;">Sair</button>
         </div>
     </div>
 </header>
 
 <section class="hero">
-    <h2>✂️ Materiais pedagógicos</h2>
+    <h2>Materiais Pedagógicos</h2>
     <div class="search-container">
-        <input type="text" id="inputBusca" placeholder="Pesquisar tema (ex: índio, água, natal...)" oninput="buscarMateriais()">
+        <input type="text" id="inputBusca" placeholder="Pesquisar tema..." oninput="buscarMateriais()">
     </div>
+    <div class="categories-menu" id="menuCategorias" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"></div>
 </section>
 
-<div class="categories-menu" id="menuCategorias"></div>
+<section class="store" id="vitrine"></section>
 
-<section class="store" id="vitrine">
-    <p style="text-align:center; grid-column: 1/-1;">Carregando materiais...</p>
-</section>
-
-<footer>© 2026 Corujices Pedagógicas</footer>
-
-<div class="modal" id="modal">
+<div class="modal" id="modalEmail">
     <div class="modal-content">
-        <span class="close" onclick="fecharModal()">×</span>
+        <h2 style="margin-bottom:15px;">Quase lá! 🦉</h2>
+        <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material após a confirmação do pagamento?</p>
+        <input type="email" id="emailCliente" placeholder="Seu melhor e-mail" required>
+        <button id="btnConfirmarEmail" class="btn-buy" style="width:100%;">IR PARA O PAGAMENTO</button>
+        <p style="font-size:11px; color:#999; margin-top:15px;" onclick="fecharModalEmail()">Cancelar</p>
+    </div>
+</div>
+
+<div class="modal" id="modalCadastro">
+    <div class="modal-content" style="max-width:500px; text-align:left;">
         <h2 id="modalTitle">Novo Material</h2>
         <input type="hidden" id="editId">
         <input type="text" id="nomeMat" placeholder="Nome do material">
-        <textarea id="descMat" placeholder="Descrição curta"></textarea>
-        
-        <label>Categoria</label>
-        <input type="text" id="novaCat" list="listaCategorias" placeholder="Digite ou selecione uma categoria">
+        <textarea id="descMat" placeholder="Descrição"></textarea>
+        <input type="text" id="novaCat" list="listaCategorias" placeholder="Categoria">
         <datalist id="listaCategorias"></datalist>
-
-        <label>Preço (R$)</label>
-        <input type="text" id="precoMat" placeholder="0,00" oninput="mascaraPreco(this)">
-        
-        <label>Imagem da Capa</label>
-        <input type="file" id="fileImg" accept="image/*">
-        
-        <label>Arquivo PDF</label>
-        <input type="file" id="filePdf" accept=".pdf">
-        
-        <input type="text" id="linkMP" placeholder="Link do Mercado Pago">
-        
-        <button id="btnPublicar" style="background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px;" onclick="salvarMaterial()">Salvar Material</button>
+        <input type="text" id="precoMat" placeholder="Preço" oninput="mascaraPreco(this)">
+        <label>Capa</label><input type="file" id="fileImg" accept="image/*">
+        <label>PDF</label><input type="file" id="filePdf" accept=".pdf">
+        <input type="text" id="linkMP" placeholder="Link Mercado Pago">
+        <button id="btnPublicar" class="btn-vendedor" style="width:100%;" onclick="salvarMaterial()">Salvar</button>
+        <button onclick="fecharModalCadastro()" style="width:100%; background:none; border:none; margin-top:10px; color:#999;">Fechar</button>
     </div>
 </div>
 
@@ -128,127 +118,114 @@
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
 
-    window.mascaraPreco = (i) => {
-        let v = i.value.replace(/\D/g,'');
-        v = (v/100).toFixed(2) + '';
-        v = v.replace(".", ",");
-        i.value = v;
+    // --- FUNÇÕES DE COMPRA ---
+    window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+        document.getElementById('modalEmail').style.display = 'flex';
+        document.getElementById('btnConfirmarEmail').onclick = async () => {
+            const email = document.getElementById('emailCliente').value;
+            if(!email.includes('@')) return alert("Digite um e-mail válido!");
+
+            // Salva na memória e no Firebase (Lead)
+            localStorage.setItem('pdf_pendente', pdfUrl);
+            try {
+                await addDoc(collection(db, "vendas_pendentes"), {
+                    email: email,
+                    item: nomeItem,
+                    data: new Date(),
+                    status: "aguardando"
+                });
+                window.location.href = linkMP;
+            } catch(e) { window.location.href = linkMP; }
+        };
     };
 
+    window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
+
+    // --- FIREBASE LOGIC (MANTIDA) ---
     onAuthStateChanged(auth, (user) => {
         document.getElementById("btn-login-view").style.display = user ? "none" : "block";
         document.getElementById("user-logged-view").style.display = user ? "flex" : "none";
-        if (user) document.getElementById("user-email").innerText = user.email;
         renderizar();
+        if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
     });
 
     window.fazerLogin = async () => {
-        const e = prompt("E-mail:"), s = prompt("Senha:");
-        if (e && s) try { await signInWithEmailAndPassword(auth, e, s); } catch (err) { alert("Acesso negado."); }
+        const e = prompt("Email:"), s = prompt("Senha:");
+        if(e && s) await signInWithEmailAndPassword(auth, e, s);
     };
     window.fazerLogout = () => signOut(auth);
 
-    window.abrirModal = (dados = null) => {
-        document.getElementById("modal").style.display = "flex";
-        if(dados) {
-            document.getElementById("modalTitle").innerText = "Editar Material";
-            document.getElementById("editId").value = dados.id;
-            document.getElementById("nomeMat").value = dados.nome;
-            document.getElementById("descMat").value = dados.descricao;
-            document.getElementById("precoMat").value = dados.preco;
-            document.getElementById("linkMP").value = dados.linkPagamento;
-            document.getElementById("novaCat").value = dados.categoria;
-        } else {
-            document.getElementById("modalTitle").innerText = "Novo Material";
-            document.getElementById("editId").value = "";
-            document.getElementById("nomeMat").value = "";
-            document.getElementById("descMat").value = "";
-            document.getElementById("precoMat").value = "";
-            document.getElementById("linkMP").value = "";
-            document.getElementById("novaCat").value = "";
+    window.abrirModalCadastro = (d = null) => {
+        document.getElementById('modalCadastro').style.display = 'flex';
+        if(d) {
+            document.getElementById('editId').value = d.id;
+            document.getElementById('nomeMat').value = d.nome;
+            document.getElementById('precoMat').value = d.preco;
+            document.getElementById('linkMP').value = d.linkPagamento;
         }
     };
-    window.fecharModal = () => document.getElementById("modal").style.display = "none";
+    window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
 
     window.salvarMaterial = async () => {
-        const btn = document.getElementById("btnPublicar");
-        const id = document.getElementById("editId").value;
-        const fileImg = document.getElementById("fileImg").files[0];
-        const filePdf = document.getElementById("filePdf").files[0];
-        btn.innerText = "Processando...";
-        btn.disabled = true;
+        const btn = document.getElementById('btnPublicar');
+        btn.innerText = "Salvando...";
+        const id = document.getElementById('editId').value;
+        const fileImg = document.getElementById('fileImg').files[0];
+        const filePdf = document.getElementById('filePdf').files[0];
 
-        try {
-            let dados = {
-                nome: document.getElementById("nomeMat").value,
-                descricao: document.getElementById("descMat").value,
-                preco: document.getElementById("precoMat").value,
-                linkPagamento: document.getElementById("linkMP").value,
-                categoria: document.getElementById("novaCat").value || "Geral",
-                data: new Date()
-            };
-            if(fileImg) {
-                const imgRef = ref(storage, `capas/${Date.now()}_img`);
-                await uploadBytes(imgRef, fileImg);
-                dados.imagem = await getDownloadURL(imgRef);
-            }
-            if(filePdf) {
-                const pdfRef = ref(storage, `pdfs/${Date.now()}_pdf`);
-                await uploadBytes(pdfRef, filePdf);
-                dados.pdfUrl = await getDownloadURL(pdfRef);
-            }
+        let dados = {
+            nome: document.getElementById('nomeMat').value,
+            descricao: document.getElementById('descMat').value,
+            preco: document.getElementById('precoMat').value,
+            linkPagamento: document.getElementById('linkMP').value,
+            categoria: document.getElementById('novaCat').value || "Geral",
+            data: new Date()
+        };
 
-            if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
-            else { await addDoc(collection(db, "materiais"), dados); }
-            
-            fecharModal();
-            location.reload();
-        } catch (e) { alert("Erro ao salvar."); btn.disabled = false; btn.innerText = "Salvar Material"; }
-    };
-
-    window.excluirMaterial = async (id) => { if(confirm("Deseja excluir?")) await deleteDoc(doc(db, "materiais", id)); };
-    window.filtrarCategoria = (cat) => { categoriaAtual = cat; renderizar(); };
-    window.buscarMateriais = () => renderizar();
-
-    // NOVA FUNÇÃO DE COMPRA COM AVISO
-    window.irParaPagamento = (linkMP, pdfUrl) => {
-        localStorage.setItem('pdf_pendente', pdfUrl);
-        alert("🦉 IMPORTANTE:\n\nApós pagar, aguarde o Mercado Pago atualizar e clique no botão de VOLTAR para baixar seu material!");
-        window.location.href = linkMP;
-    };
-
-    function renderizar() {
-        const busca = document.getElementById("inputBusca").value.toLowerCase();
-        const vitrine = document.getElementById("vitrine");
-        vitrine.innerHTML = "";
-        const filtrados = materiaisGeral.filter(m => {
-            const matchCat = (categoriaAtual === "Todos" || m.categoria === categoriaAtual);
-            const matchBusca = m.nome.toLowerCase().includes(busca) || m.descricao.toLowerCase().includes(busca);
-            return matchCat && matchBusca;
-        });
-
-        if(filtrados.length === 0) {
-            vitrine.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Nenhum material encontrado.</p>";
-            return;
+        if(fileImg) {
+            const r = ref(storage, `capas/${Date.now()}`);
+            await uploadBytes(r, fileImg);
+            dados.imagem = await getDownloadURL(r);
+        }
+        if(filePdf) {
+            const r = ref(storage, `pdfs/${Date.now()}`);
+            await uploadBytes(r, filePdf);
+            dados.pdfUrl = await getDownloadURL(r);
         }
 
+        id ? await updateDoc(doc(db, "materiais", id), dados) : await addDoc(collection(db, "materiais"), dados);
+        location.reload();
+    };
+
+    window.excluirMaterial = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "materiais", id)); };
+    window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
+    window.buscarMateriais = () => renderizar();
+
+    function renderizar() {
+        const vitrine = document.getElementById("vitrine");
+        const busca = document.getElementById("inputBusca").value.toLowerCase();
+        vitrine.innerHTML = "";
+        
+        const filtrados = materiaisGeral.filter(m => {
+            return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
+        });
+
         filtrados.forEach(m => {
-            const isAdmin = auth.currentUser ? 'flex' : 'none';
+            const admin = auth.currentUser ? 'flex' : 'none';
             vitrine.innerHTML += `
                 <div class="card">
-                    <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
+                    <img src="${m.imagem}">
                     <div class="info">
-                        <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
-                        <h3>${m.nome}</h3>
-                        <p>${m.descricao}</p>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                        <small>${m.categoria}</small>
+                        <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span class="price">R$ ${m.preco}</span>
-                            <button onclick="irParaPagamento('${m.linkPagamento}', '${m.pdfUrl}')" class="btn-buy">Comprar PDF</button>
+                            <button onclick="prepararCompra('${m.linkPagamento}', '${m.pdfUrl}', '${m.nome}')" class="btn-buy">ADQUIRIR</button>
                         </div>
                     </div>
-                    <div class="admin-zone" style="display: ${isAdmin}">
-                        <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m}).replace(/'/g, "&apos;")})'>EDITAR</button>
-                        <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+                    <div class="admin-zone" style="display:${admin}">
+                        <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
+                        <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
                     </div>
                 </div>`;
         });
@@ -260,10 +237,17 @@
         const menu = document.getElementById("menuCategorias");
         menu.innerHTML = "";
         cats.forEach(c => {
-            if(c) menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
+            menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
         });
         renderizar();
     });
+
+    window.mascaraPreco = (i) => {
+        let v = i.value.replace(/\D/g,'');
+        v = (v/100).toFixed(2) + '';
+        v = v.replace(".", ",");
+        i.value = v;
+    };
 </script>
 </body>
 </html>
