@@ -2,76 +2,53 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sucesso! - Corujices Pedagógicas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #f6f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 450px; width: 100%; text-align: center; }
-        .icon { font-size: 60px; margin-bottom: 10px; }
-        h1 { color: #6c5ce7; margin-bottom: 10px; font-size: 26px; }
-        p { color: #666; margin-bottom: 25px; line-height: 1.6; }
-        
-        /* BOTÃO DE DOWNLOAD PRINCIPAL */
-        .btn-download { display: block; background: #00b894; color: white; padding: 18px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,184,148,0.3); margin-bottom: 20px; border: none; width: 100%; cursor: pointer; }
-        .btn-download:hover { transform: translateY(-3px); background: #00a383; }
-
-        /* BOTÃO DE WHATSAPP (SUPORTE) */
-        .btn-whatsapp { display: flex; align-items: center; justify-content: center; gap: 10px; background: #25d366; color: white; padding: 12px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; margin-top: 10px; }
-        .btn-whatsapp:hover { background: #128c7e; transform: scale(1.02); }
-
-        .links-uteis { margin-top: 25px; font-size: 13px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
-        .links-uteis a { color: #6c5ce7; text-decoration: none; font-weight: 600; }
+        h1 { color: #6c5ce7; font-size: 26px; }
+        .btn-download { display: block; background: #00b894; color: white; padding: 18px; border-radius: 30px; text-decoration: none; font-weight: 700; margin-top: 20px; transition: 0.3s; }
+        .btn-whatsapp { display: block; background: #25d366; color: white; padding: 12px; border-radius: 30px; text-decoration: none; font-weight: 600; margin-top: 15px; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="icon">🦉</div>
+    <div style="font-size: 60px;">🦉</div>
     <h1>Pagamento Confirmado!</h1>
-    <p>Obrigado por comprar na <b>Corujices Pedagógicas</b>. Seu material já está pronto!</p>
+    <p>Seu material já está disponível abaixo e também foi enviado para o seu e-mail.</p>
     
     <div id="download-area">
         <p>Buscando seu arquivo...</p>
     </div>
 
-    <div style="margin: 20px 0; color: #888; font-size: 14px;">--- OU ---</div>
-
-    <p style="font-size: 14px; margin-bottom: 10px;">Teve algum problema com o download?</p>
-    <a href="https://wa.me/5579996365824?text=Olá! Acabei de comprar um material no site Corujices e gostaria de recebê-lo por aqui." 
-       target="_blank" class="btn-whatsapp">
-        🟢 Receber pelo WhatsApp
+    <a href="https://wa.me/5579996365824?text=Olá! Tive um problema com o download na Corujices." target="_blank" class="btn-whatsapp">
+        🟢 Suporte via WhatsApp
     </a>
-
-    <div class="links-uteis">
-        Já baixou tudo? <br>
-        <a href="index.html">Voltar para a Loja Inicial</a>
-    </div>
 </div>
 
 <script>
-    // Agora pegamos o link que salvamos na memória do navegador antes da compra
     const pdfUrl = localStorage.getItem('pdf_pendente');
+    const emailCliente = localStorage.getItem('email_cliente');
     const area = document.getElementById('download-area');
 
     if (pdfUrl && pdfUrl !== 'undefined') {
-        area.innerHTML = `
-            <a href="${pdfUrl}" target="_blank" download class="btn-download">
-               📥 BAIXAR MATERIAL (PDF)
-            </a>
-        `;
+        area.innerHTML = `<a href="${pdfUrl}" target="_blank" download class="btn-download">📥 BAIXAR MATERIAL (PDF)</a>`;
+        
+        // ENVIO DO E-MAIL VIA GOOGLE SCRIPT
+        if (emailCliente) {
+            // COLOQUE O LINK QUE VOCÊ COPIOU NO LUGAR DO LINK ABAIXO:
+            const scriptURL = "https://script.google.com/macros/s/AKfycbzzfSRYZTZGHyyCwigZNaBSIlInu-hLGpcXsSVlT2LrsrQLlTbAiB6cW4GiVfaGRgyu/exec";
+            
+            fetch(`${scriptURL}?email=${encodeURIComponent(emailCliente)}&link=${encodeURIComponent(pdfUrl)}&material=Material Pedagógico`)
+            .then(() => console.log("E-mail disparado!"))
+            .catch(e => console.error("Erro no e-mail", e));
+        }
     } else {
-        area.innerHTML = `<p style="color:#e74c3c; font-weight:600;">Link não encontrado no navegador. Use o botão do WhatsApp abaixo!</p>`;
+        area.innerHTML = `<p style="color:red">Erro: Link não encontrado. Chame no WhatsApp!</p>`;
     }
-
-    // Limpa a memória para a próxima compra
-    // localStorage.removeItem('pdf_pendente'); 
-
-    window.onbeforeunload = function() {
-        return "Você já baixou seu PDF?";
-    };
 </script>
 
 </body>
 </html>
-
