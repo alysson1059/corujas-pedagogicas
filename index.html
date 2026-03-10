@@ -13,28 +13,34 @@
         .logo img { height:55px; }
         .logo h1 { font-size:20px; font-weight:700; }
         .menu { display:flex; gap:20px; align-items:center; }
-        .menu a { text-decoration:none; color:#444; font-weight:500; }
         .user-info { display:none; align-items:center; gap:15px; font-size:14px; color:#666; }
         .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:8px 18px; border-radius:25px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; }
         .btn-sair { background:#ff7675; color:white; padding:5px 12px; border-radius:15px; cursor:pointer; font-size:11px; border:none; }
+        
         .hero { text-align:center; padding:60px 6% 30px; }
         .hero h2 { font-size:32px; font-weight:700; margin-bottom:15px; }
+        
         .search-container { max-width: 500px; margin: 20px auto; position: relative; }
         .search-container input { width: 100%; padding: 15px 20px; border-radius: 30px; border: 1px solid #ddd; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
         .categories-menu { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom: 30px; padding: 0 6%; }
         .cat-btn { background:white; padding:8px 18px; border-radius:20px; cursor:pointer; font-size:13px; border: 1px solid #eee; transition: 0.3s; }
         .cat-btn.active, .cat-btn:hover { background:#6c5ce7; color:white; border-color: #6c5ce7; }
+
         .store { max-width:1200px; margin:auto; padding:20px 6% 40px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
         .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; }
         .card:hover { transform:translateY(-6px); }
         .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; cursor: pointer; }
         .info { padding:18px; }
         .price { font-weight:700; color:#6c5ce7; font-size:18px; }
-        .btn-buy { background:#00b894; color:white; padding:8px 16px; border-radius:20px; text-decoration:none; font-size:13px; }
-        .admin-zone { display: none; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; justify-content: space-between; }
+        .btn-buy { background:#00b894; color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-size:13px; border:none; cursor:pointer; display:inline-block; font-weight:600; }
+        
+        .admin-zone { display: none; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; justify-content: space-between; align-items:center; }
         .btn-adm { font-size: 11px; cursor: pointer; font-weight: bold; border: none; background: none; text-transform: uppercase; }
+
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
-        .modal-content { background:white; padding:30px; width:90%; max-width:500px; border-radius:10px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background:white; padding:30px; width:90%; max-width:500px; border-radius:10px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .close { position:absolute; top:10px; right:15px; font-size:25px; cursor:pointer; color:#999; }
         input, textarea, select { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px; }
         label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; }
         footer { text-align:center; padding:40px; font-size:14px; color:#777; }
@@ -43,12 +49,11 @@
 <body>
 
 <header>
-    <a href="javascript:void(0)" class="logo" onclick="filtrarCategoria('Todos')">
+    <a href="javascript:void(0)" class="logo" onclick="location.reload()">
         <img src="coruja.png" alt="Logo Corujices">
         <h1>Corujices Pedagógicas</h1>
     </a>
     <div class="menu">
-        <a href="javascript:void(0)" onclick="filtrarCategoria('Todos')">Início</a>
         <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Acesso Vendedor</button>
         <div id="user-logged-view" class="user-info">
             <span id="user-email"></span>
@@ -68,7 +73,7 @@
 <div class="categories-menu" id="menuCategorias"></div>
 
 <section class="store" id="vitrine">
-    <p style="text-align:center; grid-column: 1/-1;">Carregando...</p>
+    <p style="text-align:center; grid-column: 1/-1;">Carregando materiais...</p>
 </section>
 
 <footer>© 2026 Corujices Pedagógicas</footer>
@@ -80,16 +85,22 @@
         <input type="hidden" id="editId">
         <input type="text" id="nomeMat" placeholder="Nome do material">
         <textarea id="descMat" placeholder="Descrição curta"></textarea>
+        
         <label>Categoria</label>
         <input type="text" id="novaCat" list="listaCategorias" placeholder="Digite ou selecione uma categoria">
         <datalist id="listaCategorias"></datalist>
+
         <label>Preço (R$)</label>
         <input type="text" id="precoMat" placeholder="0,00" oninput="mascaraPreco(this)">
+        
         <label>Imagem da Capa</label>
         <input type="file" id="fileImg" accept="image/*">
+        
         <label>Arquivo PDF</label>
         <input type="file" id="filePdf" accept=".pdf">
+        
         <input type="text" id="linkMP" placeholder="Link do Mercado Pago">
+        
         <button id="btnPublicar" style="background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px;" onclick="salvarMaterial()">Salvar Material</button>
     </div>
 </div>
@@ -125,23 +136,15 @@
     };
 
     onAuthStateChanged(auth, (user) => {
-        const loginView = document.getElementById("btn-login-view");
-        const userView = document.getElementById("user-logged-view");
-        const emailSpan = document.getElementById("user-email");
-        if (user) {
-            loginView.style.display = "none";
-            userView.style.display = "flex";
-            emailSpan.innerText = user.email;
-        } else {
-            loginView.style.display = "block";
-            userView.style.display = "none";
-        }
+        document.getElementById("btn-login-view").style.display = user ? "none" : "block";
+        document.getElementById("user-logged-view").style.display = user ? "flex" : "none";
+        if (user) document.getElementById("user-email").innerText = user.email;
         renderizar();
     });
 
     window.fazerLogin = async () => {
-        const email = prompt("E-mail:"), senha = prompt("Senha:");
-        if (email && senha) try { await signInWithEmailAndPassword(auth, email, senha); } catch (e) { alert("Erro de acesso."); }
+        const e = prompt("E-mail:"), s = prompt("Senha:");
+        if (e && s) try { await signInWithEmailAndPassword(auth, e, s); } catch (err) { alert("Acesso negado."); }
     };
     window.fazerLogout = () => signOut(auth);
 
@@ -154,7 +157,7 @@
             document.getElementById("descMat").value = dados.descricao;
             document.getElementById("precoMat").value = dados.preco;
             document.getElementById("linkMP").value = dados.linkPagamento;
-            document.getElementById("novaCat").value = dados.categoria || "";
+            document.getElementById("novaCat").value = dados.categoria;
         } else {
             document.getElementById("modalTitle").innerText = "Novo Material";
             document.getElementById("editId").value = "";
@@ -174,6 +177,7 @@
         const filePdf = document.getElementById("filePdf").files[0];
         btn.innerText = "Processando...";
         btn.disabled = true;
+
         try {
             let dados = {
                 nome: document.getElementById("nomeMat").value,
@@ -193,21 +197,25 @@
                 await uploadBytes(pdfRef, filePdf);
                 dados.pdfUrl = await getDownloadURL(pdfRef);
             }
-            if(id) {
-                await updateDoc(doc(db, "materiais", id), dados);
-                alert("Editado!");
-            } else {
-                await addDoc(collection(db, "materiais"), dados);
-                alert("Criado!");
-            }
+
+            if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
+            else { await addDoc(collection(db, "materiais"), dados); }
+            
             fecharModal();
             location.reload();
         } catch (e) { alert("Erro ao salvar."); btn.disabled = false; btn.innerText = "Salvar Material"; }
     };
 
-    window.excluirMaterial = async (id) => { if(confirm("Apagar?")) await deleteDoc(doc(db, "materiais", id)); };
+    window.excluirMaterial = async (id) => { if(confirm("Deseja excluir?")) await deleteDoc(doc(db, "materiais", id)); };
     window.filtrarCategoria = (cat) => { categoriaAtual = cat; renderizar(); };
     window.buscarMateriais = () => renderizar();
+
+    // NOVA FUNÇÃO DE COMPRA COM AVISO
+    window.irParaPagamento = (linkMP, pdfUrl) => {
+        localStorage.setItem('pdf_pendente', pdfUrl);
+        alert("🦉 IMPORTANTE:\n\nApós pagar, aguarde o Mercado Pago atualizar e clique no botão de VOLTAR para baixar seu material!");
+        window.location.href = linkMP;
+    };
 
     function renderizar() {
         const busca = document.getElementById("inputBusca").value.toLowerCase();
@@ -218,56 +226,44 @@
             const matchBusca = m.nome.toLowerCase().includes(busca) || m.descricao.toLowerCase().includes(busca);
             return matchCat && matchBusca;
         });
+
         if(filtrados.length === 0) {
             vitrine.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Nenhum material encontrado.</p>";
             return;
         }
-        filtrados.forEach(m => {
-    const isAdmin = auth.currentUser ? 'flex' : 'none';
-    
-    // NOVO: Vamos salvar o link do PDF no "armazenamento local" do navegador do cliente 
-    // um segundo antes dele ir para o Mercado Pago.
-    const prepararDownload = () => {
-        localStorage.setItem('pdf_pendente', m.pdfUrl || '');
-        window.location.href = m.linkPagamento;
-    };
 
-    vitrine.innerHTML += `
-        <div class="card">
-            <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
-            <div class="info">
-                <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
-                <h3>${m.nome}</h3>
-                <p>${m.descricao}</p>
-                <div class="row">
-                    <span class="price">R$ ${m.preco}</span>
-                    <button onclick="localStorage.setItem('pdf_pendente', '${m.pdfUrl}'); window.location.href='${m.linkPagamento}'" class="btn-buy" style="border:none; cursor:pointer;">Comprar PDF</button>
-                </div>
-            </div>
-            <div class="admin-zone" style="display: ${isAdmin}">
-                <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m})})'>EDITAR</button>
-                <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-            </div>
-        </div>`;
-});
+        filtrados.forEach(m => {
+            const isAdmin = auth.currentUser ? 'flex' : 'none';
+            vitrine.innerHTML += `
+                <div class="card">
+                    <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
+                    <div class="info">
+                        <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
+                        <h3>${m.nome}</h3>
+                        <p>${m.descricao}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                            <span class="price">R$ ${m.preco}</span>
+                            <button onclick="irParaPagamento('${m.linkPagamento}', '${m.pdfUrl}')" class="btn-buy">Comprar PDF</button>
+                        </div>
+                    </div>
+                    <div class="admin-zone" style="display: ${isAdmin}">
+                        <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m}).replace(/'/g, "&apos;")})'>EDITAR</button>
+                        <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+                    </div>
+                </div>`;
+        });
     }
 
     onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
         materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
         const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
         const menu = document.getElementById("menuCategorias");
-        const dataList = document.getElementById("listaCategorias");
         menu.innerHTML = "";
-        dataList.innerHTML = "";
         cats.forEach(c => {
-            if(c) {
-                menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
-                dataList.innerHTML += `<option value="${c}">`;
-            }
+            if(c) menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
         });
         renderizar();
     });
 </script>
 </body>
 </html>
-
