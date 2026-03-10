@@ -12,35 +12,31 @@
         .logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#333; }
         .logo img { height:55px; }
         .logo h1 { font-size:20px; font-weight:700; }
-        .menu { display:flex; gap:25px; align-items:center; }
+        .menu { display:flex; gap:20px; align-items:center; }
         .menu a { text-decoration:none; color:#444; font-weight:500; }
-        .btn-vendedor { background:#6c5ce7; color:white; padding:10px 20px; border-radius:25px; cursor:pointer; font-size:14px; }
+        
+        /* BOTÕES DE LOGIN E NAVEGAÇÃO */
+        .user-info { display:none; align-items:center; gap:15px; font-size:14px; color:#666; }
+        .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:8px 18px; border-radius:25px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; }
+        .btn-sair { background:#ff7675; color:white; padding:5px 12px; border-radius:15px; cursor:pointer; font-size:11px; border:none; }
+
         .hero { text-align:center; padding:80px 6% 50px; }
         .hero h2 { font-size:38px; font-weight:700; margin-bottom:15px; }
         .hero p { max-width:600px; margin:auto; color:#666; }
         .btn-main { display:inline-block; margin-top:25px; background:#6c5ce7; color:white; padding:15px 35px; border-radius:30px; text-decoration:none; font-weight:600; }
-        .categories { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:30px; }
-        .cat { background:white; padding:10px 20px; border-radius:30px; box-shadow:0 2px 10px rgba(0,0,0,0.05); cursor:pointer; font-size:14px; }
-        .cat:hover { background:#6c5ce7; color:white; }
         .store { max-width:1200px; margin:auto; padding:40px 6%; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
         .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; }
         .card:hover { transform:translateY(-6px); }
         .card img { width:100%; height:260px; object-fit:cover; }
         .info { padding:18px; }
-        .info h3 { font-size:18px; margin-bottom:6px; }
-        .info p { font-size:14px; color:#777; margin-bottom:15px; }
-        .row { display:flex; justify-content:space-between; align-items:center; }
+        .row { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
         .price { font-weight:700; color:#6c5ce7; font-size:18px; }
         .btn-buy { background:#00b894; color:white; padding:8px 16px; border-radius:20px; text-decoration:none; font-size:13px; }
-        .benefits { background:white; padding:60px 6%; text-align:center; margin-top:30px; }
-        .benefits h2 { margin-bottom:40px; }
-        .benefit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:25px; max-width:1000px; margin:auto; }
-        .benefit { background:#f7f7ff; padding:25px; border-radius:10px; }
+        
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
         .modal-content { background:white; padding:40px; width:90%; max-width:500px; border-radius:10px; position:relative; }
         .close { position:absolute; right:20px; top:15px; font-size:24px; cursor:pointer; }
         input, textarea { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px; }
-        button { background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px; }
         footer { text-align:center; padding:40px; font-size:14px; color:#777; }
     </style>
 </head>
@@ -53,49 +49,39 @@
     </a>
     <div class="menu">
         <a href="#">Início</a>
-        <a href="#">Materiais</a>
-        <a href="#">Grátis</a>
-        <div class="btn-vendedor" onclick="abrirVendedor()">Acesso Vendedor</div>
+        
+        <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Acesso Vendedor</button>
+        
+        <div id="user-logged-view" class="user-info">
+            <span id="user-email"></span>
+            <button class="btn-anunciar" onclick="abrirModal()">+ Inserir Anúncio</button>
+            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        </div>
     </div>
 </header>
 
 <section class="hero">
     <h2>✂️ Materiais pedagógicos prontos para imprimir</h2>
-    <p>Atividades criativas para Educação Infantil. Baixe, imprima e use em sala de aula em minutos.</p>
+    <p>Atividades criativas para Educação Infantil.</p>
     <a class="btn-main" href="#vitrine">Ver Atividades</a>
-    <div class="categories">
-        <div class="cat">Alfabetização</div>
-        <div class="cat">Datas Comemorativas</div>
-        <div class="cat">Planners</div>
-    </div>
 </section>
 
 <section class="store" id="vitrine">
     <p style="text-align:center; grid-column: 1/-1;">Carregando materiais...</p>
 </section>
 
-<section class="benefits">
-    <h2>Por que professoras amam nossos materiais?</h2>
-    <div class="benefit-grid">
-        <div class="benefit">📄 PDF pronto para imprimir</div>
-        <div class="benefit">🎨 Design educativo e criativo</div>
-        <div class="benefit">⏱ Economize horas de planejamento</div>
-    </div>
-</section>
-
 <footer>© 2026 Corujices Pedagógicas</footer>
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <span class="close" onclick="fechar()">×</span>
-        <h2>Painel do Vendedor</h2>
+        <span class="close" onclick="fecharModal()">×</span>
+        <h2>Novo Material</h2>
         <input type="text" id="nomeMat" placeholder="Nome do material">
         <textarea id="descMat" placeholder="Descrição curta"></textarea>
         <input type="text" id="precoMat" placeholder="Preço (ex: 3,90)">
         <input type="text" id="imgUrl" placeholder="Link da imagem da capa">
         <input type="text" id="linkMP" placeholder="Link de pagamento do Mercado Pago">
-        <button onclick="publicarMaterial()">Publicar Material</button>
-        <button onclick="fazerLogout()" style="background:#ff7675; margin-top:10px;">Sair</button>
+        <button style="background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px;" onclick="publicarMaterial()">Publicar Agora</button>
     </div>
 </div>
 
@@ -117,52 +103,66 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Abrir modal ou pedir login
-    window.abrirVendedor = async () => {
-        if (auth.currentUser) {
-            document.getElementById("modal").style.display = "flex";
+    // --- CONTROLE DE INTERFACE (LOGIN/LOGOUT) ---
+    onAuthStateChanged(auth, (user) => {
+        const loginView = document.getElementById("btn-login-view");
+        const userView = document.getElementById("user-logged-view");
+        const emailSpan = document.getElementById("user-email");
+
+        if (user) {
+            loginView.style.display = "none";
+            userView.style.display = "flex";
+            emailSpan.innerText = user.email;
         } else {
-            const email = prompt("E-mail do Vendedor:");
-            const senha = prompt("Senha:");
-            if (email && senha) {
-                try {
-                    await signInWithEmailAndPassword(auth, email, senha);
-                    document.getElementById("modal").style.display = "flex";
-                } catch (e) { alert("Acesso Negado!"); }
+            loginView.style.display = "block";
+            userView.style.display = "none";
+        }
+    });
+
+    window.fazerLogin = async () => {
+        const email = prompt("E-mail:");
+        const senha = prompt("Senha:");
+        if (email && senha) {
+            try {
+                await signInWithEmailAndPassword(auth, email, senha);
+                alert("Login efetuado com sucesso!");
+            } catch (e) {
+                alert("Usuário não tem acesso ou senha incorreta.");
             }
         }
     };
 
-    window.fechar = () => document.getElementById("modal").style.display = "none";
-
     window.fazerLogout = () => {
-        signOut(auth);
-        location.reload();
+        signOut(auth).then(() => alert("Você saiu!"));
     };
 
-    // Publicar no Firestore
+    // --- MODAL ---
+    window.abrirModal = () => document.getElementById("modal").style.display = "flex";
+    window.fecharModal = () => document.getElementById("modal").style.display = "none";
+
+    // --- FIREBASE FUNÇÕES ---
     window.publicarMaterial = async () => {
         const nome = document.getElementById("nomeMat").value;
-        const desc = document.getElementById("descMat").value;
         const preco = document.getElementById("precoMat").value;
         const link = document.getElementById("linkMP").value;
         const img = document.getElementById("imgUrl").value;
+        const desc = document.getElementById("descMat").value;
 
-        if(!nome || !preco || !link) return alert("Preencha os campos!");
+        if(!nome || !preco || !link) return alert("Campos obrigatórios vazios!");
 
         try {
             await addDoc(collection(db, "materiais"), {
                 nome, descricao: desc, preco, linkPagamento: link, imagem: img, data: new Date()
             });
-            alert("Publicado!");
-            fechar();
+            alert("Material cadastrado!");
+            fecharModal();
         } catch (e) { alert("Erro ao salvar."); }
     };
 
-    // Atualizar vitrine em tempo real
-    const vitrine = document.getElementById("vitrine");
+    // --- ATUALIZAR VITRINE ---
     const q = query(collection(db, "materiais"), orderBy("data", "desc"));
     onSnapshot(q, (snapshot) => {
+        const vitrine = document.getElementById("vitrine");
         vitrine.innerHTML = "";
         snapshot.forEach((doc) => {
             const m = doc.data();
