@@ -1,477 +1,185 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Corujices Pedagógicas</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-background:#f6f8ff;
-color:#333;
-}
-
-/* HEADER */
-
-header{
-background:white;
-padding:15px 6%;
-display:flex;
-align-items:center;
-justify-content:space-between;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:999;
-}
-
-.logo{
-display:flex;
-align-items:center;
-gap:10px;
-text-decoration:none;
-color:#333;
-}
-
-.logo img{
-height:55px;
-}
-
-.logo h1{
-font-size:20px;
-font-weight:700;
-}
-
-.menu{
-display:flex;
-gap:25px;
-align-items:center;
-}
-
-.menu a{
-text-decoration:none;
-color:#444;
-font-weight:500;
-}
-
-.btn-vendedor{
-background:#6c5ce7;
-color:white;
-padding:10px 20px;
-border-radius:25px;
-cursor:pointer;
-font-size:14px;
-}
-
-/* HERO */
-
-.hero{
-text-align:center;
-padding:80px 6% 50px;
-}
-
-.hero h2{
-font-size:38px;
-font-weight:700;
-margin-bottom:15px;
-}
-
-.hero p{
-max-width:600px;
-margin:auto;
-color:#666;
-}
-
-.btn-main{
-display:inline-block;
-margin-top:25px;
-background:#6c5ce7;
-color:white;
-padding:15px 35px;
-border-radius:30px;
-text-decoration:none;
-font-weight:600;
-}
-
-/* CATEGORIAS */
-
-.categories{
-display:flex;
-justify-content:center;
-gap:12px;
-flex-wrap:wrap;
-margin-top:30px;
-}
-
-.cat{
-background:white;
-padding:10px 20px;
-border-radius:30px;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
-cursor:pointer;
-font-size:14px;
-}
-
-.cat:hover{
-background:#6c5ce7;
-color:white;
-}
-
-/* PRODUTOS */
-
-.store{
-max-width:1200px;
-margin:auto;
-padding:40px 6%;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:30px;
-}
-
-.card{
-background:white;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-transition:0.3s;
-}
-
-.card:hover{
-transform:translateY(-6px);
-}
-
-.card img{
-width:100%;
-height:260px;
-object-fit:cover;
-}
-
-.info{
-padding:18px;
-}
-
-.info h3{
-font-size:18px;
-margin-bottom:6px;
-}
-
-.info p{
-font-size:14px;
-color:#777;
-margin-bottom:15px;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.price{
-font-weight:700;
-color:#6c5ce7;
-font-size:18px;
-}
-
-.btn-buy{
-background:#00b894;
-color:white;
-padding:8px 16px;
-border-radius:20px;
-text-decoration:none;
-font-size:13px;
-}
-
-/* BENEFICIOS */
-
-.benefits{
-background:white;
-padding:60px 6%;
-text-align:center;
-margin-top:30px;
-}
-
-.benefits h2{
-margin-bottom:40px;
-}
-
-.benefit-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:25px;
-max-width:1000px;
-margin:auto;
-}
-
-.benefit{
-background:#f7f7ff;
-padding:25px;
-border-radius:10px;
-}
-
-/* MODAL */
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-justify-content:center;
-align-items:center;
-z-index:9999;
-}
-
-.modal-content{
-background:white;
-padding:40px;
-width:90%;
-max-width:500px;
-border-radius:10px;
-position:relative;
-}
-
-.close{
-position:absolute;
-right:20px;
-top:15px;
-font-size:24px;
-cursor:pointer;
-}
-
-input,textarea{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border:1px solid #ddd;
-border-radius:6px;
-}
-
-button{
-background:#6c5ce7;
-color:white;
-border:none;
-padding:14px;
-width:100%;
-font-weight:600;
-cursor:pointer;
-border-radius:6px;
-}
-
-/* FOOTER */
-
-footer{
-text-align:center;
-padding:40px;
-font-size:14px;
-color:#777;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corujices Pedagógicas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body { background:#f6f8ff; color:#333; }
+        header { background:white; padding:15px 6%; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:999; }
+        .logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#333; }
+        .logo img { height:55px; }
+        .logo h1 { font-size:20px; font-weight:700; }
+        .menu { display:flex; gap:25px; align-items:center; }
+        .menu a { text-decoration:none; color:#444; font-weight:500; }
+        .btn-vendedor { background:#6c5ce7; color:white; padding:10px 20px; border-radius:25px; cursor:pointer; font-size:14px; }
+        .hero { text-align:center; padding:80px 6% 50px; }
+        .hero h2 { font-size:38px; font-weight:700; margin-bottom:15px; }
+        .hero p { max-width:600px; margin:auto; color:#666; }
+        .btn-main { display:inline-block; margin-top:25px; background:#6c5ce7; color:white; padding:15px 35px; border-radius:30px; text-decoration:none; font-weight:600; }
+        .categories { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:30px; }
+        .cat { background:white; padding:10px 20px; border-radius:30px; box-shadow:0 2px 10px rgba(0,0,0,0.05); cursor:pointer; font-size:14px; }
+        .cat:hover { background:#6c5ce7; color:white; }
+        .store { max-width:1200px; margin:auto; padding:40px 6%; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
+        .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; }
+        .card:hover { transform:translateY(-6px); }
+        .card img { width:100%; height:260px; object-fit:cover; }
+        .info { padding:18px; }
+        .info h3 { font-size:18px; margin-bottom:6px; }
+        .info p { font-size:14px; color:#777; margin-bottom:15px; }
+        .row { display:flex; justify-content:space-between; align-items:center; }
+        .price { font-weight:700; color:#6c5ce7; font-size:18px; }
+        .btn-buy { background:#00b894; color:white; padding:8px 16px; border-radius:20px; text-decoration:none; font-size:13px; }
+        .benefits { background:white; padding:60px 6%; text-align:center; margin-top:30px; }
+        .benefits h2 { margin-bottom:40px; }
+        .benefit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:25px; max-width:1000px; margin:auto; }
+        .benefit { background:#f7f7ff; padding:25px; border-radius:10px; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
+        .modal-content { background:white; padding:40px; width:90%; max-width:500px; border-radius:10px; position:relative; }
+        .close { position:absolute; right:20px; top:15px; font-size:24px; cursor:pointer; }
+        input, textarea { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px; }
+        button { background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px; }
+        footer { text-align:center; padding:40px; font-size:14px; color:#777; }
+    </style>
 </head>
-
 <body>
 
 <header>
-
-<a href="#" class="logo">
-
-<img src="coruja.png" alt="Logo Corujices">
-
-<h1>Corujices Pedagógicas</h1>
-
-</a>
-
-<div class="menu">
-
-<a href="#">Início</a>
-<a href="#">Materiais</a>
-<a href="#">Grátis</a>
-
-<div class="btn-vendedor" onclick="abrir()">Acesso Vendedor</div>
-
-</div>
-
+    <a href="#" class="logo">
+        <img src="coruja.png" alt="Logo Corujices">
+        <h1>Corujices Pedagógicas</h1>
+    </a>
+    <div class="menu">
+        <a href="#">Início</a>
+        <a href="#">Materiais</a>
+        <a href="#">Grátis</a>
+        <div class="btn-vendedor" onclick="abrirVendedor()">Acesso Vendedor</div>
+    </div>
 </header>
 
 <section class="hero">
-
-<h2>✂️ Materiais pedagógicos prontos para imprimir</h2>
-
-<p>
-Atividades criativas para Educação Infantil.
-Baixe, imprima e use em sala de aula em minutos.
-</p>
-
-<a class="btn-main" href="#">Ver Atividades</a>
-
-<div class="categories">
-
-<div class="cat">Dia do Índio</div>
-<div class="cat">Dia da Árvore</div>
-<div class="cat">Páscoa</div>
-<div class="cat">Festa Junina</div>
-<div class="cat">Alfabetização</div>
-
-</div>
-
+    <h2>✂️ Materiais pedagógicos prontos para imprimir</h2>
+    <p>Atividades criativas para Educação Infantil. Baixe, imprima e use em sala de aula em minutos.</p>
+    <a class="btn-main" href="#vitrine">Ver Atividades</a>
+    <div class="categories">
+        <div class="cat">Alfabetização</div>
+        <div class="cat">Datas Comemorativas</div>
+        <div class="cat">Planners</div>
+    </div>
 </section>
 
-<section class="store">
-
-<div class="card">
-
-<img src="preview1.jpg">
-
-<div class="info">
-
-<h3>Atividade Dia do Índio</h3>
-
-<p>Material educativo para imprimir e recortar.</p>
-
-<div class="row">
-
-<span class="price">R$ 3,90</span>
-
-<a href="#" class="btn-buy">Comprar PDF</a>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<img src="preview2.jpg">
-
-<div class="info">
-
-<h3>Árvore para montar</h3>
-
-<p>Atividade divertida para o Dia da Árvore.</p>
-
-<div class="row">
-
-<span class="price">R$ 4,90</span>
-
-<a href="#" class="btn-buy">Comprar PDF</a>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<img src="preview3.jpg">
-
-<div class="info">
-
-<h3>Planner Semanal</h3>
-
-<p>Material gratuito para professores.</p>
-
-<div class="row">
-
-<span class="price">GRÁTIS</span>
-
-<a href="#" class="btn-buy">Baixar</a>
-
-</div>
-
-</div>
-
-</div>
-
+<section class="store" id="vitrine">
+    <p style="text-align:center; grid-column: 1/-1;">Carregando materiais...</p>
 </section>
 
 <section class="benefits">
-
-<h2>Por que professoras amam nossos materiais?</h2>
-
-<div class="benefit-grid">
-
-<div class="benefit">
-📄 PDF pronto para imprimir
-</div>
-
-<div class="benefit">
-🎨 Design educativo e criativo
-</div>
-
-<div class="benefit">
-⏱ Economize horas de planejamento
-</div>
-
-<div class="benefit">
-🧸 Ideal para educação infantil
-</div>
-
-</div>
-
+    <h2>Por que professoras amam nossos materiais?</h2>
+    <div class="benefit-grid">
+        <div class="benefit">📄 PDF pronto para imprimir</div>
+        <div class="benefit">🎨 Design educativo e criativo</div>
+        <div class="benefit">⏱ Economize horas de planejamento</div>
+    </div>
 </section>
 
-<footer>
-
-© 2026 Corujices Pedagógicas  
-Materiais digitais para professores
-
-</footer>
+<footer>© 2026 Corujices Pedagógicas</footer>
 
 <div class="modal" id="modal">
-
-<div class="modal-content">
-
-<span class="close" onclick="fechar()">×</span>
-
-<h2>Painel do Vendedor</h2>
-
-<input type="text" placeholder="Nome do material">
-
-<textarea placeholder="Descrição do material"></textarea>
-
-<input type="number" placeholder="Preço">
-
-<label>Imagem de capa</label>
-
-<input type="file">
-
-<label>Arquivo PDF</label>
-
-<input type="file">
-
-<button>Publicar Material</button>
-
+    <div class="modal-content">
+        <span class="close" onclick="fechar()">×</span>
+        <h2>Painel do Vendedor</h2>
+        <input type="text" id="nomeMat" placeholder="Nome do material">
+        <textarea id="descMat" placeholder="Descrição curta"></textarea>
+        <input type="text" id="precoMat" placeholder="Preço (ex: 3,90)">
+        <input type="text" id="imgUrl" placeholder="Link da imagem da capa">
+        <input type="text" id="linkMP" placeholder="Link de pagamento do Mercado Pago">
+        <button onclick="publicarMaterial()">Publicar Material</button>
+        <button onclick="fazerLogout()" style="background:#ff7675; margin-top:10px;">Sair</button>
+    </div>
 </div>
 
-</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBNh-d3UTLAHs8G6IdjrAYzQUBYfTUysRU",
+        authDomain: "corujices-7d098.firebaseapp.com",
+        projectId: "corujices-7d098",
+        storageBucket: "corujices-7d098.firebasestorage.app",
+        messagingSenderId: "495106355719",
+        appId: "1:495106355719:web:7633ef1d51e4d73746f0a2"
+    };
 
-function abrir(){
-document.getElementById("modal").style.display="flex";
-}
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-function fechar(){
-document.getElementById("modal").style.display="none";
-}
+    // Abrir modal ou pedir login
+    window.abrirVendedor = async () => {
+        if (auth.currentUser) {
+            document.getElementById("modal").style.display = "flex";
+        } else {
+            const email = prompt("E-mail do Vendedor:");
+            const senha = prompt("Senha:");
+            if (email && senha) {
+                try {
+                    await signInWithEmailAndPassword(auth, email, senha);
+                    document.getElementById("modal").style.display = "flex";
+                } catch (e) { alert("Acesso Negado!"); }
+            }
+        }
+    };
 
+    window.fechar = () => document.getElementById("modal").style.display = "none";
+
+    window.fazerLogout = () => {
+        signOut(auth);
+        location.reload();
+    };
+
+    // Publicar no Firestore
+    window.publicarMaterial = async () => {
+        const nome = document.getElementById("nomeMat").value;
+        const desc = document.getElementById("descMat").value;
+        const preco = document.getElementById("precoMat").value;
+        const link = document.getElementById("linkMP").value;
+        const img = document.getElementById("imgUrl").value;
+
+        if(!nome || !preco || !link) return alert("Preencha os campos!");
+
+        try {
+            await addDoc(collection(db, "materiais"), {
+                nome, descricao: desc, preco, linkPagamento: link, imagem: img, data: new Date()
+            });
+            alert("Publicado!");
+            fechar();
+        } catch (e) { alert("Erro ao salvar."); }
+    };
+
+    // Atualizar vitrine em tempo real
+    const vitrine = document.getElementById("vitrine");
+    const q = query(collection(db, "materiais"), orderBy("data", "desc"));
+    onSnapshot(q, (snapshot) => {
+        vitrine.innerHTML = "";
+        snapshot.forEach((doc) => {
+            const m = doc.data();
+            vitrine.innerHTML += `
+                <div class="card">
+                    <img src="${m.imagem || 'https://via.placeholder.com/260'}">
+                    <div class="info">
+                        <h3>${m.nome}</h3>
+                        <p>${m.descricao}</p>
+                        <div class="row">
+                            <span class="price">R$ ${m.preco}</span>
+                            <a href="${m.linkPagamento}" target="_blank" class="btn-buy">Comprar PDF</a>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    });
 </script>
 
 </body>
