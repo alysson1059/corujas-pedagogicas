@@ -223,29 +223,33 @@
             return;
         }
         filtrados.forEach(m => {
-            const isAdmin = auth.currentUser ? 'flex' : 'none';
-            // Lógica do Link Dinâmico corrigida para dentro do código
-            const urlSucesso = `https://alysson1059.github.io/corujas-pedagogicas/sucesso.html?pdf=${encodeURIComponent(m.pdfUrl || '')}`;
-            const linkVenda = `${m.linkPagamento}&success_url=${encodeURIComponent(urlSucesso)}`;
+    const isAdmin = auth.currentUser ? 'flex' : 'none';
+    
+    // NOVO: Vamos salvar o link do PDF no "armazenamento local" do navegador do cliente 
+    // um segundo antes dele ir para o Mercado Pago.
+    const prepararDownload = () => {
+        localStorage.setItem('pdf_pendente', m.pdfUrl || '');
+        window.location.href = m.linkPagamento;
+    };
 
-            vitrine.innerHTML += `
-                <div class="card">
-                    <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
-                    <div class="info">
-                        <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
-                        <h3>${m.nome}</h3>
-                        <p>${m.descricao}</p>
-                        <div class="row">
-                            <span class="price">R$ ${m.preco}</span>
-                            <a href="${linkVenda}" target="_blank" class="btn-buy">Comprar PDF</a>
-                        </div>
-                    </div>
-                    <div class="admin-zone" style="display: ${isAdmin}">
-                        <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m})})'>EDITAR</button>
-                        <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-                    </div>
-                </div>`;
-        });
+    vitrine.innerHTML += `
+        <div class="card">
+            <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
+            <div class="info">
+                <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
+                <h3>${m.nome}</h3>
+                <p>${m.descricao}</p>
+                <div class="row">
+                    <span class="price">R$ ${m.preco}</span>
+                    <button onclick="localStorage.setItem('pdf_pendente', '${m.pdfUrl}'); window.location.href='${m.linkPagamento}'" class="btn-buy" style="border:none; cursor:pointer;">Comprar PDF</button>
+                </div>
+            </div>
+            <div class="admin-zone" style="display: ${isAdmin}">
+                <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m})})'>EDITAR</button>
+                <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+            </div>
+        </div>`;
+});
     }
 
     onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
@@ -266,3 +270,4 @@
 </script>
 </body>
 </html>
+
