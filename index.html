@@ -12,39 +12,36 @@
         .logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#333; }
         .logo img { height:55px; }
         .logo h1 { font-size:20px; font-weight:700; }
-        .menu { display:flex; gap:20px; align-items:center; }
-        .menu a { text-decoration:none; color:#444; font-weight:500; }
         
+        .menu { display:flex; gap:20px; align-items:center; }
         .user-info { display:none; align-items:center; gap:15px; font-size:14px; color:#666; }
         .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:8px 18px; border-radius:25px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; }
         .btn-sair { background:#ff7675; color:white; padding:5px 12px; border-radius:15px; cursor:pointer; font-size:11px; border:none; }
 
-        .hero { text-align:center; padding:80px 6% 50px; }
-        .hero h2 { font-size:38px; font-weight:700; margin-bottom:15px; }
-        .hero p { max-width:600px; margin:auto; color:#666; }
-        .btn-main { display:inline-block; margin-top:25px; background:#6c5ce7; color:white; padding:15px 35px; border-radius:30px; text-decoration:none; font-weight:600; }
+        .hero { text-align:center; padding:60px 6% 30px; }
+        .hero h2 { font-size:32px; font-weight:700; margin-bottom:15px; }
         
-        .store { max-width:1200px; margin:auto; padding:40px 6%; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
-        .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; position: relative; }
-        .card:hover { transform:translateY(-6px); }
+        /* PESQUISA E CATEGORIAS */
+        .search-container { max-width: 500px; margin: 20px auto; position: relative; }
+        .search-container input { width: 100%; padding: 15px 20px; border-radius: 30px; border: 1px solid #ddd; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
-        /* IMAGEM QUADRADA COM ZOOM */
-        .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; cursor: zoom-in; }
-        .card img:active { transform: scale(1.1); }
+        .categories-menu { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom: 30px; padding: 0 6%; }
+        .cat-btn { background:white; padding:8px 18px; border-radius:20px; cursor:pointer; font-size:13px; border: 1px solid #eee; transition: 0.3s; }
+        .cat-btn.active, .cat-btn:hover { background:#6c5ce7; color:white; border-color: #6c5ce7; }
 
+        .store { max-width:1200px; margin:auto; padding:20px 6% 40px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; }
+        .card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.05); transition:0.3s; }
+        .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; cursor: pointer; }
         .info { padding:18px; }
-        .row { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
         .price { font-weight:700; color:#6c5ce7; font-size:18px; }
         .btn-buy { background:#00b894; color:white; padding:8px 16px; border-radius:20px; text-decoration:none; font-size:13px; }
         
-        /* BOTÃO EXCLUIR */
-        .admin-zone { display: none; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; justify-content: flex-end; }
-        .btn-excluir { color: #ff7675; font-size: 12px; cursor: pointer; font-weight: bold; border: none; background: none; }
+        .admin-zone { display: none; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; justify-content: space-between; }
+        .btn-adm { font-size: 11px; cursor: pointer; font-weight: bold; border: none; background: none; text-transform: uppercase; }
 
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999; }
-        .modal-content { background:white; padding:30px; width:90%; max-width:500px; border-radius:10px; position:relative; max-height: 90vh; overflow-y: auto; }
-        .close { position:absolute; right:20px; top:15px; font-size:24px; cursor:pointer; }
-        input, textarea { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px; }
+        .modal-content { background:white; padding:30px; width:90%; max-width:500px; border-radius:10px; max-height: 90vh; overflow-y: auto; }
+        input, textarea, select { width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px; }
         label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; }
         footer { text-align:center; padding:40px; font-size:14px; color:#777; }
     </style>
@@ -52,12 +49,12 @@
 <body>
 
 <header>
-    <a href="#" class="logo">
+    <a href="javascript:void(0)" class="logo" onclick="filtrarCategoria('Todos')">
         <img src="coruja.png" alt="Logo Corujices">
         <h1>Corujices Pedagógicas</h1>
     </a>
     <div class="menu">
-        <a href="#">Início</a>
+        <a href="javascript:void(0)" onclick="filtrarCategoria('Todos')">Início</a>
         <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Acesso Vendedor</button>
         <div id="user-logged-view" class="user-info">
             <span id="user-email"></span>
@@ -68,13 +65,17 @@
 </header>
 
 <section class="hero">
-    <h2>✂️ Materiais pedagógicos prontos para imprimir</h2>
-    <p>Atividades criativas para Educação Infantil.</p>
-    <a class="btn-main" href="#vitrine">Ver Atividades</a>
+    <h2>✂️ Materiais pedagógicos</h2>
+    <div class="search-container">
+        <input type="text" id="inputBusca" placeholder="Pesquisar tema (ex: índio, água, natal...)" oninput="buscarMateriais()">
+    </div>
 </section>
 
+<div class="categories-menu" id="menuCategorias">
+    </div>
+
 <section class="store" id="vitrine">
-    <p style="text-align:center; grid-column: 1/-1;">Carregando materiais...</p>
+    <p style="text-align:center; grid-column: 1/-1;">Carregando...</p>
 </section>
 
 <footer>© 2026 Corujices Pedagógicas</footer>
@@ -82,14 +83,20 @@
 <div class="modal" id="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal()">×</span>
-        <h2>Novo Material</h2>
+        <h2 id="modalTitle">Novo Material</h2>
+        <input type="hidden" id="editId">
+        
         <input type="text" id="nomeMat" placeholder="Nome do material">
         <textarea id="descMat" placeholder="Descrição curta"></textarea>
         
+        <label>Categoria</label>
+        <input type="text" id="novaCat" list="listaCategorias" placeholder="Digite ou selecione uma categoria">
+        <datalist id="listaCategorias"></datalist>
+
         <label>Preço (R$)</label>
         <input type="text" id="precoMat" placeholder="0,00" oninput="mascaraPreco(this)">
         
-        <label>Imagem da Capa</label>
+        <label>Imagem da Capa (Obrigatório no novo)</label>
         <input type="file" id="fileImg" accept="image/*">
         
         <label>Arquivo PDF</label>
@@ -97,14 +104,14 @@
         
         <input type="text" id="linkMP" placeholder="Link do Mercado Pago">
         
-        <button id="btnPublicar" style="background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px;" onclick="publicarMaterial()">Publicar Agora</button>
+        <button id="btnPublicar" style="background:#6c5ce7; color:white; border:none; padding:14px; width:100%; font-weight:600; cursor:pointer; border-radius:6px;" onclick="salvarMaterial()">Salvar Material</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, updateDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -121,7 +128,10 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // --- MÁSCARA DE PREÇO ---
+    let materiaisGeral = [];
+    let categoriaAtual = "Todos";
+
+    // --- MÁSCARA ---
     window.mascaraPreco = (i) => {
         let v = i.value.replace(/\D/g,'');
         v = (v/100).toFixed(2) + '';
@@ -129,110 +139,109 @@
         i.value = v;
     };
 
-    // --- CONTROLE DE INTERFACE ---
+    // --- LOGIN ---
     onAuthStateChanged(auth, (user) => {
-        const loginView = document.getElementById("btn-login-view");
-        const userView = document.getElementById("user-logged-view");
-        const emailSpan = document.getElementById("user-email");
-
-        if (user) {
-            loginView.style.display = "none";
-            userView.style.display = "flex";
-            emailSpan.innerText = user.email;
-        } else {
-            loginView.style.display = "block";
-            userView.style.display = "none";
-        }
+        document.getElementById("btn-login-view").style.display = user ? "none" : "block";
+        document.getElementById("user-logged-view").style.display = user ? "flex" : "none";
+        if (user) document.getElementById("user-email").innerText = user.email;
+        renderizar();
     });
 
     window.fazerLogin = async () => {
-        const email = prompt("E-mail:");
-        const senha = prompt("Senha:");
-        if (email && senha) {
-            try {
-                await signInWithEmailAndPassword(auth, email, senha);
-                alert("Login efetuado com sucesso!");
-            } catch (e) { alert("Usuário sem acesso."); }
-        }
+        const email = prompt("E-mail:"), senha = prompt("Senha:");
+        if (email && senha) try { await signInWithEmailAndPassword(auth, email, senha); } catch (e) { alert("Erro de acesso."); }
     };
-
     window.fazerLogout = () => signOut(auth);
 
-    // --- MODAL ---
-    window.abrirModal = () => document.getElementById("modal").style.display = "flex";
+    // --- MODAL (NOVO OU EDITAR) ---
+    window.abrirModal = (dados = null) => {
+        document.getElementById("modal").style.display = "flex";
+        if(dados) {
+            document.getElementById("modalTitle").innerText = "Editar Material";
+            document.getElementById("editId").value = dados.id;
+            document.getElementById("nomeMat").value = dados.nome;
+            document.getElementById("descMat").value = dados.descricao;
+            document.getElementById("precoMat").value = dados.preco;
+            document.getElementById("linkMP").value = dados.linkPagamento;
+            document.getElementById("novaCat").value = dados.categoria || "";
+        } else {
+            document.getElementById("modalTitle").innerText = "Novo Material";
+            document.getElementById("editId").value = "";
+            document.querySelectorAll("#modal input:not([type=button])").forEach(i => i.value = "");
+            document.getElementById("descMat").value = "";
+        }
+    };
     window.fecharModal = () => document.getElementById("modal").style.display = "none";
 
-    // --- PUBLICAR COM UPLOAD ---
-    window.publicarMaterial = async () => {
+    // --- SALVAR/EDITAR ---
+    window.salvarMaterial = async () => {
         const btn = document.getElementById("btnPublicar");
+        const id = document.getElementById("editId").value;
         const fileImg = document.getElementById("fileImg").files[0];
         const filePdf = document.getElementById("filePdf").files[0];
-        const nome = document.getElementById("nomeMat").value;
-        const preco = document.getElementById("precoMat").value;
-        const linkMP = document.getElementById("linkMP").value;
 
-        if(!nome || !preco || !fileImg) return alert("Nome, Preço e Imagem são obrigatórios!");
-
-        btn.innerText = "Enviando Arquivos...";
+        btn.innerText = "Processando...";
         btn.disabled = true;
 
         try {
-            let imgUrl = "";
-            let pdfUrl = "";
+            let dados = {
+                nome: document.getElementById("nomeMat").value,
+                descricao: document.getElementById("descMat").value,
+                preco: document.getElementById("precoMat").value,
+                linkPagamento: document.getElementById("linkMP").value,
+                categoria: document.getElementById("novaCat").value || "Geral",
+                data: new Date()
+            };
 
-            // Upload da Imagem
-            const imgRef = ref(storage, `capas/${Date.now()}_${fileImg.name}`);
-            await uploadBytes(imgRef, fileImg);
-            imgUrl = await getDownloadURL(imgRef);
-
-            // Upload do PDF (opcional)
+            if(fileImg) {
+                const imgRef = ref(storage, `capas/${Date.now()}_img`);
+                await uploadBytes(imgRef, fileImg);
+                dados.imagem = await getDownloadURL(imgRef);
+            }
             if(filePdf) {
-                const pdfRef = ref(storage, `pdfs/${Date.now()}_${filePdf.name}`);
+                const pdfRef = ref(storage, `pdfs/${Date.now()}_pdf`);
                 await uploadBytes(pdfRef, filePdf);
-                pdfUrl = await getDownloadURL(pdfRef);
+                dados.pdfUrl = await getDownloadURL(pdfRef);
             }
 
-            await addDoc(collection(db, "materiais"), {
-                nome,
-                descricao: document.getElementById("descMat").value,
-                preco,
-                linkPagamento: linkMP,
-                imagem: imgUrl,
-                pdfUrl: pdfUrl,
-                data: new Date()
-            });
-
-            alert("Material cadastrado!");
+            if(id) {
+                await updateDoc(doc(db, "materiais", id), dados);
+                alert("Editado!");
+            } else {
+                await addDoc(collection(db, "materiais"), dados);
+                alert("Criado!");
+            }
             fecharModal();
             location.reload();
-        } catch (e) { 
-            alert("Erro ao salvar."); 
-            btn.disabled = false;
-            btn.innerText = "Publicar Agora";
-        }
+        } catch (e) { alert("Erro ao salvar."); btn.disabled = false; }
     };
 
-    // --- EXCLUIR MATERIAL ---
-    window.excluirMaterial = async (id) => {
-        if(confirm("Tem certeza que deseja excluir este material?")) {
-            await deleteDoc(doc(db, "materiais", id));
-        }
-    };
+    window.excluirMaterial = async (id) => { if(confirm("Apagar?")) await deleteDoc(doc(db, "materiais", id)); };
 
-    // --- VITRINE ---
-    const q = query(collection(db, "materiais"), orderBy("data", "desc"));
-    onSnapshot(q, (snapshot) => {
+    // --- BUSCA E FILTROS ---
+    window.filtrarCategoria = (cat) => { categoriaAtual = cat; renderizar(); };
+    window.buscarMateriais = () => renderizar();
+
+    function renderizar() {
+        const busca = document.getElementById("inputBusca").value.toLowerCase();
         const vitrine = document.getElementById("vitrine");
         vitrine.innerHTML = "";
-        snapshot.forEach((snapshotDoc) => {
-            const m = snapshotDoc.data();
-            const id = snapshotDoc.id;
-            const isAdmin = auth.currentUser ? 'flex' : 'none';
 
+        const filtrados = materiaisGeral.filter(m => {
+            const matchCat = (categoriaAtual === "Todos" || m.categoria === categoriaAtual);
+            const matchBusca = m.nome.toLowerCase().includes(busca) || m.descricao.toLowerCase().includes(busca);
+            return matchCat && matchBusca;
+        });
+
+        if(filtrados.length === 0) vitrine.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Nenhum material encontrado.</p>";
+
+        filtrados.forEach(m => {
+            const isAdmin = auth.currentUser ? 'flex' : 'none';
             vitrine.innerHTML += `
                 <div class="card">
-                    <img src="${m.imagem || 'https://via.placeholder.com/260'}" onclick="window.open(this.src)">
+                    <img src="${m.imagem}" onclick="window.open(this.src)">
                     <div class="info">
+                        <small style="color:#6c5ce7; font-weight:600">${m.categoria}</small>
                         <h3>${m.nome}</h3>
                         <p>${m.descricao}</p>
                         <div class="row">
@@ -241,12 +250,33 @@
                         </div>
                     </div>
                     <div class="admin-zone" style="display: ${isAdmin}">
-                        <button class="btn-excluir" onclick="excluirMaterial('${id}')">EXCLUIR ANÚNCIO</button>
+                        <button class="btn-adm" style="color:#6c5ce7" onclick='abrirModal(${JSON.stringify({id: m.id, ...m})})'>EDITAR</button>
+                        <button class="btn-adm" style="color:#ff7675" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
                     </div>
                 </div>`;
         });
+    }
+
+    // --- ESCUTAR BANCO ---
+    onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+        materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
+        
+        // Atualizar Menu de Categorias
+        const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
+        const menu = document.getElementById("menuCategorias");
+        const dataList = document.getElementById("listaCategorias");
+        
+        menu.innerHTML = "";
+        dataList.innerHTML = "";
+        
+        cats.forEach(c => {
+            if(c) {
+                menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
+                dataList.innerHTML += `<option value="${c}">`;
+            }
+        });
+        renderizar();
     });
 </script>
-
 </body>
 </html>
