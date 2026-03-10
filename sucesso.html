@@ -2,36 +2,62 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sucesso! - Corujices Pedagógicas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f6f8ff; text-align: center; padding: 50px; }
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h1 { color: #00b894; }
-        .btn-download { display: inline-block; background: #6c5ce7; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; margin-top: 20px; }
-        .coruja-img { width: 100px; margin-bottom: 20px; }
+        body { font-family: 'Poppins', sans-serif; background: #f6f8ff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 450px; text-align: center; }
+        .icon { font-size: 50px; margin-bottom: 20px; }
+        h1 { color: #6c5ce7; margin-bottom: 10px; font-size: 24px; }
+        p { color: #666; margin-bottom: 30px; line-height: 1.6; }
+        .btn-download { display: block; background: #00b894; color: white; padding: 18px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,184,148,0.3); }
+        .btn-download:hover { transform: translateY(-3px); background: #00a383; }
+        .aviso { margin-top: 20px; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <img src="coruja.png" class="coruja-img">
-        <h1>Pagamento Aprovado!</h1>
-        <p>Oba! Seu material pedagógico já está pronto para ser usado.</p>
-        
-        <div id="area-download">
-            <p>Carregando seu link de download...</p>
-        </div>
 
-        <p style="margin-top: 30px; font-size: 13px; color: #777;">
-            Também enviamos uma cópia para o seu e-mail.
-        </p>
-        <a href="index.html" style="color: #6c5ce7; font-size: 14px;">Voltar para a loja</a>
+<div class="card">
+    <div class="icon">🥳</div>
+    <h1>Pagamento Confirmado!</h1>
+    <p>Obrigado por apoiar a <b>Corujices Pedagógicas</b>. Seu material já está disponível abaixo:</p>
+    
+    <div id="download-area">
+        <p>Verificando arquivo...</p>
     </div>
 
-    <script type="module">
-        // Aqui você usaria uma lógica para pegar o ID do material da URL
-        // e buscar o 'pdfUrl' no Firestore. 
-        // Por enquanto, o Mercado Pago redirecionará para cá.
-    </script>
+    <div class="aviso">
+        Dica: Salve este arquivo em uma pasta segura. <br>
+        <a href="index.html" style="color: #6c5ce7; text-decoration: none;">Voltar para a loja</a>
+    </div>
+</div>
+
+<script>
+    // Função para pegar dados da URL (ex: ?file=LinkDoFirebase)
+    function getUrlParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    const pdfLink = getUrlParam('file'); // O Mercado Pago deve enviar ?file=...
+    const area = document.getElementById('download-area');
+
+    if (pdfLink) {
+        area.innerHTML = `
+            <a href="${pdfLink}" download class="btn-download">
+               📥 BAIXAR MEU PDF AGORA
+            </a>
+        `;
+    } else {
+        area.innerHTML = `<p style="color:red">Erro ao localizar o arquivo. Por favor, entre em contato com o suporte.</p>`;
+    }
+
+    // AVISO PARA NÃO FECHAR SEM BAIXAR
+    window.onbeforeunload = function() {
+        return "Você já baixou seu material? Não saia sem baixar!";
+    };
+</script>
+
 </body>
 </html>
