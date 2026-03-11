@@ -85,8 +85,7 @@
         <datalist id="listaCategorias"></datalist>
         <input type="text" id="precoMat" placeholder="Preço" oninput="mascaraPreco(this)">
         <label>Capa</label><input type="file" id="fileImg" accept="image/*">
-        <label>PDF</label><input type="file" id="filePdf" accept=".pdf">
-        <input type="text" id="linkMP" placeholder="Link Mercado Pago">
+        <label>PDF</label><input type="file" id="filePdf" accept=".pdf">       
         <button id="btnPublicar" class="btn-vendedor" style="width:100%;" onclick="salvarMaterial()">Salvar</button>
         <button onclick="fecharModalCadastro()" style="width:100%; background:none; border:none; margin-top:10px; color:#999;">Fechar</button>
     </div>
@@ -125,36 +124,48 @@
     let categoriaAtual = "Todos";
 
     // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
-window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
-    // 1. VERIFICA SE O ITEM É GRATUITO
-    // Remove o "R$ ", troca vírgula por ponto e transforma em número
+window.prepararCompra = (pdfUrl, nomeItem, preco) => {
+    // 1. Verifica se é Grátis
     const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
-
     if (valorNumerico === 0) {
-        // FLUXO GRATUITO: Abre o PDF direto em uma nova aba
-        alert("🦉 Este material é gratuito! Seu download vai começar.");
+        alert("🦉 Este material é gratuito!");
         window.open(pdfUrl, '_blank');
-        return; // Para o código aqui, não abre modal nem redireciona
+        return;
     }
 
-    // 2. FLUXO PAGO (Segue o que já estava funcionando)
+    // 2. Fluxo Pago
     document.getElementById('modalEmail').style.display = 'flex';
-    
     document.getElementById('btnConfirmarEmail').onclick = async () => {
         const email = document.getElementById('emailCliente').value;
         if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
+        const btn = document.getElementById('btnConfirmarEmail');
+        btn.innerText = "Gerando Pagamento...";
+        btn.disabled = true;
+
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzIG6lW-JuouInGaQG5SMf3hIEQCHF7zrwbtwEPoVpOobkGLMlQ22mg7HmJ5NjrvxHd/exec";
-        
-        fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdfUrl)}&material=${encodeURIComponent(nomeItem)}`)
-        .then(() => console.log("Aviso enviado"))
-        .catch(() => console.log("Erro silencioso"));
+       // Dentro do onclick do btnConfirmarEmail:
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyATlEBctpktNBo8VZc51ve0FawnBWvuHFuzbGNtzWIJE50I6Dcr59LNS914eszIcz0/exec"; 
+        const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
 
-        window.location.href = linkMP;
-    };
+        fetch(scriptURL + params)
+            .then(res => res.text())
+            .then(linkOficial => {
+                // Se o script retornar algo que não seja um link (erro), avisamos
+                if (linkOficial.includes("http")) {
+                    window.location.href = linkOficial;
+                } else {
+                    throw new Error(linkOficial);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Erro ao gerar pagamento. Verifique se o Script está publicado como 'Qualquer pessoa'.");
+                btn.innerText = "IR PARA O PAGAMENTO";
+                btn.disabled = false;
+            });
 };
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
@@ -174,16 +185,23 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
     window.fazerLogout = () => signOut(auth);
 
     window.abrirModalCadastro = (d = null) => {
-        document.getElementById('modalCadastro').style.display = 'flex';
-        if(d) {
-            document.getElementById('editId').value = d.id;
-            document.getElementById('nomeMat').value = d.nome;
-            document.getElementById('descMat').value = d.descricao;
-            document.getElementById('precoMat').value = d.preco;
-            document.getElementById('linkMP').value = d.linkPagamento;
-            document.getElementById('novaCat').value = d.categoria;
-        }
-    };
+    document.getElementById('modalCadastro').style.display = 'flex';
+    if(d) {
+        document.getElementById('editId').value = d.id;
+        document.getElementById('nomeMat').value = d.nome;
+        document.getElementById('descMat').value = d.descricao;
+        document.getElementById('precoMat').value = d.preco;
+        document.getElementById('novaCat').value = d.categoria;
+        // Removi a linha que buscava o linkMP
+    } else {
+        // Limpa os campos para um novo cadastro
+        document.getElementById('editId').value = "";
+        document.getElementById('nomeMat').value = "";
+        document.getElementById('descMat').value = "";
+        document.getElementById('precoMat').value = "";
+        document.getElementById('novaCat').value = "";
+    }
+};
     window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
 
     window.salvarMaterial = async () => {
@@ -193,14 +211,14 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
         const fileImg = document.getElementById('fileImg').files[0];
         const filePdf = document.getElementById('filePdf').files[0];
 
-        let dados = {
-            nome: document.getElementById('nomeMat').value,
-            descricao: document.getElementById('descMat').value,
-            preco: document.getElementById('precoMat').value,
-            linkPagamento: document.getElementById('linkMP').value,
-            categoria: document.getElementById('novaCat').value || "Geral",
-            data: new Date()
-        };
+       let dados = {
+    nome: document.getElementById('nomeMat').value,
+    descricao: document.getElementById('descMat').value,
+    preco: document.getElementById('precoMat').value,
+    // Removi o linkPagamento daqui
+    categoria: document.getElementById('novaCat').value || "Geral",
+    data: new Date()
+};
 
         if(fileImg) {
             const r = ref(storage, `capas/${Date.now()}`);
@@ -239,7 +257,7 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
                         <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
     <span class="price">R$ ${m.preco}</span>
-    <button onclick="prepararCompra('${m.linkPagamento}', '${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+    <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
 </div>
                     </div>
                     <div class="admin-zone" style="display:${admin}">
@@ -270,6 +288,7 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
 </script>
 </body>
 </html>
+
 
 
 
