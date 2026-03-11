@@ -36,38 +36,27 @@
 </div>
 
 <script>
-    // 1. LINK ATUALIZADO DO SEU ROBÔ (O QUE FUNCIONA)
-    const scriptURL = "https://script.google.com/macros/s/AKfycbw6tVh8JuRLAH-k2m1KdJtX3ih0s3qDNbMozZf9XAJSgdke3YjsXYnohtluQLsBKM76/exec";
-    
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzIG6lW-JuouInGaQG5SMf3hIEQCHF7zrwbtwEPoVpOobkGLMlQ22mg7HmJ5NjrvxHd/exec";
     const email = localStorage.getItem('email_cliente');
     const pdf = localStorage.getItem('pdf_pendente');
 
     if (email && pdf) {
-        // 2. DISPARO DO E-MAIL
-        fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdf)}&material=Material Pedagógico`)
+        fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdf)}`)
         .then(response => {
-            console.log("Comando enviado ao robô!");
             document.getElementById('icon-status').innerText = "🦉";
-            document.getElementById('icon-status').style.animation = "none";
             document.getElementById('status-title').innerText = "Tudo Certo!";
-            document.getElementById('status-text').innerHTML = "Seu material foi enviado para o e-mail: <br><b>" + email + "</b>.<br>Verifique sua caixa de entrada agora!";
+            document.getElementById('status-text').innerHTML = "Seu material foi enviado para: <br><b>" + email + "</b>.";
             
-            // 3. LIMPEZA SEGURA: Só limpa depois que o envio deu OK
+            // Limpa apenas após o sucesso
             localStorage.removeItem('pdf_pendente');
             localStorage.removeItem('email_cliente');
         })
         .catch(error => {
-            console.error("Erro ao avisar robô:", error);
-            document.getElementById('status-title').innerText = "Ops! Quase lá...";
-            document.getElementById('status-text').innerText = "Ocorreu um pequeno erro no envio automático. Por favor, chame no WhatsApp abaixo!";
+            document.getElementById('status-title').innerText = "Ops! Chame o Suporte";
         });
-    } else {
-        // Caso o cliente chegue aqui sem dados (tentando burlar ou erro de cache)
-        document.getElementById('icon-status').innerText = "❌";
-        document.getElementById('status-title').innerText = "Dados não encontrados";
-        document.getElementById('status-text').innerText = "Não conseguimos localizar seu e-mail. Por favor, entre em contato com o suporte.";
     }
 </script>
 
 </body>
 </html>
+
