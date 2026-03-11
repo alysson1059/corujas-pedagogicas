@@ -6,35 +6,27 @@
     <title>Corujices Pedagógicas | Loja Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ESTILOS BASE PROFISSIONAIS */
+        /* MANTIDO SEU ESTILO ORIGINAL */
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         body { background:#f0f2f5; color:#1a1a1a; }
-        
         header { background:white; padding:15px 6%; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:1000; }
         .logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:#333; }
         .logo img { height:50px; }
-        
         .btn-vendedor, .btn-anunciar { background:#6c5ce7; color:white; padding:10px 22px; border-radius:30px; cursor:pointer; font-size:13px; font-weight:600; text-decoration:none; border:none; transition: 0.3s; }
-        
         .hero { text-align:center; padding:60px 6% 30px; background: white; }
         .search-container { max-width: 600px; margin: 20px auto; }
         .search-container input { width: 100%; padding: 18px 25px; border-radius: 35px; border: 2px solid #eee; outline: none; }
-
         .store { max-width:1200px; margin:auto; padding:40px 6%; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; }
         .card { background:white; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.05); transition:0.4s; }
         .card img { width:100%; aspect-ratio: 1/1; object-fit:cover; }
         .info { padding:20px; }
         .price { font-size:22px; font-weight:700; color:#2d3436; }
         .btn-buy { background:#00b894; color:white; padding:12px 25px; border-radius:30px; border:none; cursor:pointer; font-weight:700; }
-
-        /* MODAIS */
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000; backdrop-filter: blur(5px); }
         .modal-content { background:white; padding:40px; width:95%; max-width:450px; border-radius:20px; position: relative; text-align:center; }
         input, textarea { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px; }
-        
         .admin-zone { display: none; padding: 15px; background: #f8f9fa; border-top: 1px solid #eee; justify-content: space-between; }
         .btn-adm { font-size: 11px; cursor: pointer; font-weight: 700; border: none; background: none; color: #b2bec3; }
-
         #aviso-pendente { display:none; background:#6c5ce7; color:white; text-align:center; padding:10px; font-weight:600; cursor:pointer; }
     </style>
 </head>
@@ -71,10 +63,10 @@
 <div class="modal" id="modalEmail">
     <div class="modal-content">
         <h2 style="margin-bottom:15px;">Quase lá! 🦉</h2>
-        <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material após a confirmação do pagamento?</p>
+        <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material?</p>
         <input type="email" id="emailCliente" placeholder="Seu melhor e-mail" required>
         <button id="btnConfirmarEmail" class="btn-buy" style="width:100%;">IR PARA O PAGAMENTO</button>
-        <p style="font-size:11px; color:#999; margin-top:15px;" onclick="fecharModalEmail()">Cancelar</p>
+        <p style="font-size:11px; color:#999; margin-top:15px; cursor:pointer;" onclick="fecharModalEmail()">Cancelar</p>
     </div>
 </div>
 
@@ -118,24 +110,36 @@
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
 
-    // --- FUNÇÕES DE COMPRA ---
-window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
-    const email = prompt("Para qual e-mail devemos enviar o material?");
-    if (!email || !email.includes('@')) return alert("E-mail inválido.");
+    // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
+    window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+        // Abre o modal de e-mail que você já tinha no HTML
+        document.getElementById('modalEmail').style.display = 'flex';
+        
+        document.getElementById('btnConfirmarEmail').onclick = async () => {
+            const email = document.getElementById('emailCliente').value;
+            if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
-    // Salva para garantir o envio na página de sucesso também
-    localStorage.setItem('email_cliente', email);
-    localStorage.setItem('pdf_pendente', pdfUrl);
+            // 1. Salva na memória do navegador (local)
+            localStorage.setItem('email_cliente', email);
+            localStorage.setItem('pdf_pendente', pdfUrl);
 
-    // O SEGREDO: Passamos o link do PDF codificado para o Mercado Pago nos devolver depois
-    const linkSeguro = linkMP + "&external_reference=" + btoa(pdfUrl) + "&payer_email=" + email;
-    
-    window.location.href = linkSeguro;
-};
+            // 2. Salva no Firebase para seu controle (Lead)
+            try {
+                await addDoc(collection(db, "vendas_pendentes"), {
+                    email: email,
+                    material: nomeItem,
+                    data: new Date()
+                });
+            } catch(e) { console.log("Erro ao salvar lead"); }
+
+            // 3. Redireciona para o link LIMPO (Sem o erro de ID)
+            window.location.href = linkMP;
+        };
+    };
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
 
-    // --- FIREBASE LOGIC (MANTIDA) ---
+    // --- RESTANTE DAS FUNÇÕES MANTIDAS ---
     onAuthStateChanged(auth, (user) => {
         document.getElementById("btn-login-view").style.display = user ? "none" : "block";
         document.getElementById("user-logged-view").style.display = user ? "flex" : "none";
@@ -154,8 +158,10 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
         if(d) {
             document.getElementById('editId').value = d.id;
             document.getElementById('nomeMat').value = d.nome;
+            document.getElementById('descMat').value = d.descricao;
             document.getElementById('precoMat').value = d.preco;
             document.getElementById('linkMP').value = d.linkPagamento;
+            document.getElementById('novaCat').value = d.categoria;
         }
     };
     window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
@@ -187,7 +193,8 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
             dados.pdfUrl = await getDownloadURL(r);
         }
 
-        id ? await updateDoc(doc(db, "materiais", id), dados) : await addDoc(collection(db, "materiais"), dados);
+        if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
+        else { await addDoc(collection(db, "materiais"), dados); }
         location.reload();
     };
 
@@ -199,11 +206,9 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
         const vitrine = document.getElementById("vitrine");
         const busca = document.getElementById("inputBusca").value.toLowerCase();
         vitrine.innerHTML = "";
-        
         const filtrados = materiaisGeral.filter(m => {
             return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
         });
-
         filtrados.forEach(m => {
             const admin = auth.currentUser ? 'flex' : 'none';
             vitrine.innerHTML += `
@@ -231,7 +236,7 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
         const menu = document.getElementById("menuCategorias");
         menu.innerHTML = "";
         cats.forEach(c => {
-            menu.innerHTML += `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria('${c}')">${c}</button>`;
+            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#6c5ce7':'#eee'}; color:${categoriaAtual===c?'white':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
         });
         renderizar();
     });
@@ -245,6 +250,3 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
 </script>
 </body>
 </html>
-
-
-
