@@ -268,8 +268,11 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
         });
     }
 
-   onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+  // --- MONITORAMENTO DO BANCO DE DADOS ---
+    onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
         materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
+        
+        // Atualiza as categorias no menu
         const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
         const menu = document.getElementById("menuCategorias");
         if (menu) {
@@ -279,8 +282,9 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
             });
         }
         renderizar();
-    }); // <--- ESTA CHAVE E PARÊNTESE FALTAVAM AQUI
+    }); // FECHAMENTO CORRETO DO ONSNAPSHOT
 
+    // --- UTILITÁRIOS ---
     window.mascaraPreco = (i) => {
         let v = i.value.replace(/\D/g,'');
         v = (v/100).toFixed(2) + '';
@@ -290,6 +294,7 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
 </script>
 </body>
 </html>
+
 
 
 
