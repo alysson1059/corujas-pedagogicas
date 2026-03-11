@@ -225,7 +225,8 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
                         <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span class="price">R$ ${m.preco}</span>
-                            <button onclick="prepararCompra('${m.linkPagamento}', '${m.pdfUrl}', '${m.nome}')" class="btn-buy">ADQUIRIR</button>
+                           // Procure esta linha e mude para:
+<button onclick="prepararCompra('${m.linkPagamento}', '${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
                         </div>
                     </div>
                     <div class="admin-zone" style="display:${admin}">
@@ -256,6 +257,7 @@ window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
 </script>
 </body>
 </html>
+
 
 
 
