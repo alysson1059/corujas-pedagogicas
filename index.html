@@ -119,36 +119,18 @@
     let categoriaAtual = "Todos";
 
     // --- FUNÇÕES DE COMPRA ---
-   window.prepararCompra = async (linkMP, pdfUrl, nomeItem) => {
+ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
     const email = prompt("Para qual e-mail devemos enviar o material após o pagamento?");
-    if (!email || !email.includes('@')) return alert("E-mail inválido.");
+    if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
-    // Bloqueia o botão para evitar cliques duplos
-    alert("🦉 Gerando seu pagamento seguro... Aguarde um instante.");
+    // SALVAMOS O E-MAIL NA MEMÓRIA PARA A PÁGINA DE SUCESSO
+    localStorage.setItem('email_cliente', email);
+    localStorage.setItem('pdf_pendente', pdfUrl);
 
-    // Criar a preferência via API do Mercado Pago
-    // Nota: Para fazer isso 100% via JS sem servidor, usamos o Checkout Pro padrão,
-    // mas passamos o link do PDF no campo 'external_reference'
-    
-    const prefData = {
-        items: [{
-            title: nomeItem,
-            quantity: 1,
-            unit_price: 1.00, // O preço deve vir do seu banco de dados
-            currency_id: "BRL"
-        }],
-        payer: { email: email },
-        external_reference: pdfUrl, // AQUI ESTÁ O SEGREDO DA SEGURANÇA
-        back_urls: {
-            success: "https://alysson1059.github.io/corujas-pedagogicas/sucesso.html"
-        },
-        auto_return: "approved"
-    };
-
-    // Abre o Mercado Pago
-    // Para simplificar e manter gratuito, use o link que você já tem, 
-    // mas a segurança real agora está no Script que valida o 'approved'
-    window.location.href = linkMP; 
+    // IMPORTANTE: Para o link manual funcionar com Webhook, 
+    // ele precisaria ser gerado via API. 
+    // Como você usa links prontos, vamos garantir o redirecionamento:
+    window.location.href = linkMP + "&payer_email=" + email + "&external_reference=" + btoa(pdfUrl);
 };
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
@@ -263,4 +245,5 @@
 </script>
 </body>
 </html>
+
 
