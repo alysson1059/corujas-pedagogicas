@@ -111,26 +111,23 @@
     let categoriaAtual = "Todos";
 
     // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
-   window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+ window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
     document.getElementById('modalEmail').style.display = 'flex';
     
     document.getElementById('btnConfirmarEmail').onclick = async () => {
         const email = document.getElementById('emailCliente').value;
         if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
-        // 1. Salva localmente com segurança
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
-        // 2. Tenta avisar o robô IMEDIATAMENTE (Opcional, mas garante o envio)
-        const scriptURL = "https://script.google.com/macros/s/AKfycbw6tVh8JuRLAH-k2m1KdJtX3ih0s3qDNbMozZf9XAJSgdke3YjsXYnohtluQLsBKM76/exec";
+        // AVISO AO NOVO SCRIPT (Garantia de entrega)
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzIG6lW-JuouInGaQG5SMf3hIEQCHF7zrwbtwEPoVpOobkGLMlQ22mg7HmJ5NjrvxHd/exec";
         
-        // Usamos encodeURIComponent para o link do PDF não "quebrar" o robô
         fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdfUrl)}&material=${encodeURIComponent(nomeItem)}`)
-        .then(() => console.log("Aviso enviado"))
-        .catch(() => console.log("Erro ao avisar antecipadamente"));
+        .then(() => console.log("Aviso enviado ao robô"))
+        .catch(() => console.log("Erro silencioso"));
 
-        // 3. Vai para o pagamento (Link limpo para não dar erro no Mercado Pago)
         window.location.href = linkMP;
     };
 };
@@ -248,4 +245,5 @@
 </script>
 </body>
 </html>
+
 
