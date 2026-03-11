@@ -119,18 +119,18 @@
     let categoriaAtual = "Todos";
 
     // --- FUNÇÕES DE COMPRA ---
- window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
-    const email = prompt("Para qual e-mail devemos enviar o material após o pagamento?");
-    if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
+window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+    const email = prompt("Para qual e-mail devemos enviar o material?");
+    if (!email || !email.includes('@')) return alert("E-mail inválido.");
 
-    // SALVAMOS O E-MAIL NA MEMÓRIA PARA A PÁGINA DE SUCESSO
+    // Salva para garantir o envio na página de sucesso também
     localStorage.setItem('email_cliente', email);
     localStorage.setItem('pdf_pendente', pdfUrl);
 
-    // IMPORTANTE: Para o link manual funcionar com Webhook, 
-    // ele precisaria ser gerado via API. 
-    // Como você usa links prontos, vamos garantir o redirecionamento:
-    window.location.href = linkMP + "&payer_email=" + email + "&external_reference=" + btoa(pdfUrl);
+    // O SEGREDO: Passamos o link do PDF codificado para o Mercado Pago nos devolver depois
+    const linkSeguro = linkMP + "&external_reference=" + btoa(pdfUrl) + "&payer_email=" + email;
+    
+    window.location.href = linkSeguro;
 };
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
@@ -245,5 +245,6 @@
 </script>
 </body>
 </html>
+
 
 
