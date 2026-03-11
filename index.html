@@ -111,31 +111,29 @@
     let categoriaAtual = "Todos";
 
     // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
-    window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
-        // Abre o modal de e-mail que você já tinha no HTML
-        document.getElementById('modalEmail').style.display = 'flex';
+   window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+    document.getElementById('modalEmail').style.display = 'flex';
+    
+    document.getElementById('btnConfirmarEmail').onclick = async () => {
+        const email = document.getElementById('emailCliente').value;
+        if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
+
+        // 1. Salva localmente com segurança
+        localStorage.setItem('email_cliente', email);
+        localStorage.setItem('pdf_pendente', pdfUrl);
+
+        // 2. Tenta avisar o robô IMEDIATAMENTE (Opcional, mas garante o envio)
+        const scriptURL = "https://script.google.com/macros/s/AKfycbw6tVh8JuRLAH-k2m1KdJtX3ih0s3qDNbMozZf9XAJSgdke3YjsXYnohtluQLsBKM76/exec";
         
-        document.getElementById('btnConfirmarEmail').onclick = async () => {
-            const email = document.getElementById('emailCliente').value;
-            if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
+        // Usamos encodeURIComponent para o link do PDF não "quebrar" o robô
+        fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdfUrl)}&material=${encodeURIComponent(nomeItem)}`)
+        .then(() => console.log("Aviso enviado"))
+        .catch(() => console.log("Erro ao avisar antecipadamente"));
 
-            // 1. Salva na memória do navegador (local)
-            localStorage.setItem('email_cliente', email);
-            localStorage.setItem('pdf_pendente', pdfUrl);
-
-            // 2. Salva no Firebase para seu controle (Lead)
-            try {
-                await addDoc(collection(db, "vendas_pendentes"), {
-                    email: email,
-                    material: nomeItem,
-                    data: new Date()
-                });
-            } catch(e) { console.log("Erro ao salvar lead"); }
-
-            // 3. Redireciona para o link LIMPO (Sem o erro de ID)
-            window.location.href = linkMP;
-        };
+        // 3. Vai para o pagamento (Link limpo para não dar erro no Mercado Pago)
+        window.location.href = linkMP;
     };
+};
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
 
@@ -250,3 +248,4 @@
 </script>
 </body>
 </html>
+
