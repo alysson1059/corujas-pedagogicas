@@ -268,16 +268,18 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
         });
     }
 
-    onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+   onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
         materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
         const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
         const menu = document.getElementById("menuCategorias");
-        menu.innerHTML = "";
-        cats.forEach(c => {
-            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#6c5ce7':'#eee'}; color:${categoriaAtual===c?'white':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
-        });
+        if (menu) {
+            menu.innerHTML = "";
+            cats.forEach(c => {
+                menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#6c5ce7':'#eee'}; color:${categoriaAtual===c?'white':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
+            });
+        }
         renderizar();
-    });
+    }); // <--- ESTA CHAVE E PARÊNTESE FALTAVAM AQUI
 
     window.mascaraPreco = (i) => {
         let v = i.value.replace(/\D/g,'');
