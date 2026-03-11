@@ -111,7 +111,19 @@
     let categoriaAtual = "Todos";
 
     // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
- window.prepararCompra = (linkMP, pdfUrl, nomeItem) => {
+window.prepararCompra = (linkMP, pdfUrl, nomeItem, preco) => {
+    // 1. VERIFICA SE O ITEM É GRATUITO
+    // Remove o "R$ ", troca vírgula por ponto e transforma em número
+    const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
+
+    if (valorNumerico === 0) {
+        // FLUXO GRATUITO: Abre o PDF direto em uma nova aba
+        alert("🦉 Este material é gratuito! Seu download vai começar.");
+        window.open(pdfUrl, '_blank');
+        return; // Para o código aqui, não abre modal nem redireciona
+    }
+
+    // 2. FLUXO PAGO (Segue o que já estava funcionando)
     document.getElementById('modalEmail').style.display = 'flex';
     
     document.getElementById('btnConfirmarEmail').onclick = async () => {
@@ -121,11 +133,10 @@
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
-        // AVISO AO NOVO SCRIPT (Garantia de entrega)
         const scriptURL = "https://script.google.com/macros/s/AKfycbzIG6lW-JuouInGaQG5SMf3hIEQCHF7zrwbtwEPoVpOobkGLMlQ22mg7HmJ5NjrvxHd/exec";
         
         fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdfUrl)}&material=${encodeURIComponent(nomeItem)}`)
-        .then(() => console.log("Aviso enviado ao robô"))
+        .then(() => console.log("Aviso enviado"))
         .catch(() => console.log("Erro silencioso"));
 
         window.location.href = linkMP;
@@ -245,5 +256,6 @@
 </script>
 </body>
 </html>
+
 
 
