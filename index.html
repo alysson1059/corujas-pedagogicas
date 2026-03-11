@@ -123,57 +123,56 @@
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
 
-    // --- CORREÇÃO DA FUNÇÃO DE COMPRA ---
-window.prepararCompra = (pdfUrl, nomeItem, preco) => {
-    // 1. Verifica se é Grátis
-    const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
-    if (valorNumerico === 0) {
-        alert("🦉 Este material é gratuito!");
-        window.open(pdfUrl, '_blank');
-        return;
-    }
+    // --- FUNÇÃO DE COMPRA ---
+    window.prepararCompra = (pdfUrl, nomeItem, preco) => {
+        const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
+        if (valorNumerico === 0) {
+            alert("🦉 Este material é gratuito!");
+            window.open(pdfUrl, '_blank');
+            return;
+        }
 
-    // 2. Fluxo Pago
-    document.getElementById('modalEmail').style.display = 'flex';
-    document.getElementById('btnConfirmarEmail').onclick = async () => {
-        const email = document.getElementById('emailCliente').value;
-        if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
+        document.getElementById('modalEmail').style.display = 'flex';
+        document.getElementById('btnConfirmarEmail').onclick = async () => {
+            const email = document.getElementById('emailCliente').value;
+            if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
-        const btn = document.getElementById('btnConfirmarEmail');
-        btn.innerText = "Gerando Pagamento...";
-        btn.disabled = true;
+            const btn = document.getElementById('btnConfirmarEmail');
+            btn.innerText = "Gerando Pagamento...";
+            btn.disabled = true;
 
-        localStorage.setItem('email_cliente', email);
-        localStorage.setItem('pdf_pendente', pdfUrl);
+            localStorage.setItem('email_cliente', email);
+            localStorage.setItem('pdf_pendente', pdfUrl);
 
-       // Dentro do onclick do btnConfirmarEmail:
-        const scriptURL = "https://script.google.com/macros/s/AKfycbyATlEBctpktNBo8VZc51ve0FawnBWvuHFuzbGNtzWIJE50I6Dcr59LNS914eszIcz0/exec"; 
-        const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
+            const scriptURL = "https://script.google.com/macros/s/AKfycbyATlEBctpktNBo8VZc51ve0FawnBWvuHFuzbGNtzWIJE50I6Dcr59LNS914eszIcz0/exec"; 
+            const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
 
-        fetch(scriptURL + params)
-            .then(res => res.text())
-            .then(linkOficial => {
-                // Se o script retornar algo que não seja um link (erro), avisamos
-                if (linkOficial.includes("http")) {
-                    window.location.href = linkOficial;
-                } else {
-                    throw new Error(linkOficial);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Erro ao gerar pagamento. Verifique se o Script está publicado como 'Qualquer pessoa'.");
-                btn.innerText = "IR PARA O PAGAMENTO";
-                btn.disabled = false;
-            });
-};
+            fetch(scriptURL + params)
+                .then(res => res.text())
+                .then(linkOficial => {
+                    if (linkOficial.includes("http")) {
+                        window.location.href = linkOficial;
+                    } else {
+                        throw new Error(linkOficial);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Erro ao gerar pagamento.");
+                    btn.innerText = "IR PARA O PAGAMENTO";
+                    btn.disabled = false;
+                });
+        };
+    };
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
 
-    // --- RESTANTE DAS FUNÇÕES MANTIDAS ---
+    // --- AUTENTICAÇÃO ---
     onAuthStateChanged(auth, (user) => {
-        document.getElementById("btn-login-view").style.display = user ? "none" : "block";
-        document.getElementById("user-logged-view").style.display = user ? "flex" : "none";
+        const loginBtn = document.getElementById("btn-login-view");
+        const userView = document.getElementById("user-logged-view");
+        if(loginBtn) loginBtn.style.display = user ? "none" : "block";
+        if(userView) userView.style.display = user ? "flex" : "none";
         renderizar();
         if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
     });
@@ -184,24 +183,24 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
     };
     window.fazerLogout = () => signOut(auth);
 
+    // --- CADASTRO ---
     window.abrirModalCadastro = (d = null) => {
-    document.getElementById('modalCadastro').style.display = 'flex';
-    if(d) {
-        document.getElementById('editId').value = d.id;
-        document.getElementById('nomeMat').value = d.nome;
-        document.getElementById('descMat').value = d.descricao;
-        document.getElementById('precoMat').value = d.preco;
-        document.getElementById('novaCat').value = d.categoria;
-        // Removi a linha que buscava o linkMP
-    } else {
-        // Limpa os campos para um novo cadastro
-        document.getElementById('editId').value = "";
-        document.getElementById('nomeMat').value = "";
-        document.getElementById('descMat').value = "";
-        document.getElementById('precoMat').value = "";
-        document.getElementById('novaCat').value = "";
-    }
-};
+        document.getElementById('modalCadastro').style.display = 'flex';
+        if(d) {
+            document.getElementById('editId').value = d.id;
+            document.getElementById('nomeMat').value = d.nome;
+            document.getElementById('descMat').value = d.descricao;
+            document.getElementById('precoMat').value = d.preco;
+            document.getElementById('novaCat').value = d.categoria;
+        } else {
+            document.getElementById('editId').value = "";
+            document.getElementById('nomeMat').value = "";
+            document.getElementById('descMat').value = "";
+            document.getElementById('precoMat').value = "";
+            document.getElementById('novaCat').value = "";
+        }
+    };
+
     window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
 
     window.salvarMaterial = async () => {
@@ -211,14 +210,13 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
         const fileImg = document.getElementById('fileImg').files[0];
         const filePdf = document.getElementById('filePdf').files[0];
 
-       let dados = {
-    nome: document.getElementById('nomeMat').value,
-    descricao: document.getElementById('descMat').value,
-    preco: document.getElementById('precoMat').value,
-    // Removi o linkPagamento daqui
-    categoria: document.getElementById('novaCat').value || "Geral",
-    data: new Date()
-};
+        let dados = {
+            nome: document.getElementById('nomeMat').value,
+            descricao: document.getElementById('descMat').value,
+            preco: document.getElementById('precoMat').value,
+            categoria: document.getElementById('novaCat').value || "Geral",
+            data: new Date()
+        };
 
         if(fileImg) {
             const r = ref(storage, `capas/${Date.now()}`);
@@ -240,8 +238,10 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
     window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
     window.buscarMateriais = () => renderizar();
 
+    // --- RENDERIZAÇÃO ---
     function renderizar() {
         const vitrine = document.getElementById("vitrine");
+        if(!vitrine) return;
         const busca = document.getElementById("inputBusca").value.toLowerCase();
         vitrine.innerHTML = "";
         const filtrados = materiaisGeral.filter(m => {
@@ -256,9 +256,9 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
                         <small>${m.categoria}</small>
                         <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-    <span class="price">R$ ${m.preco}</span>
-    <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
-</div>
+                            <span class="price">R$ ${m.preco}</span>
+                            <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+                        </div>
                     </div>
                     <div class="admin-zone" style="display:${admin}">
                         <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
@@ -268,8 +268,7 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
         });
     }
 
-  // --- MONITORAMENTO DO BANCO DE DADOS ---
-   // --- MONITORAMENTO DO BANCO DE DADOS ---
+    // --- MONITORAMENTO ---
     onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
         materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
         const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
@@ -283,7 +282,6 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
         renderizar();
     });
 
-    // --- MÁSCARA DE PREÇO ---
     window.mascaraPreco = (i) => {
         if (!i.value) return;
         let v = i.value.replace(/\D/g,'');
@@ -294,6 +292,7 @@ window.prepararCompra = (pdfUrl, nomeItem, preco) => {
 </script>
 </body>
 </html>
+
 
 
 
