@@ -21,8 +21,8 @@
 
 <div class="card">
     <div class="spinner">⏳</div>
-    <h1>Pagamento em Processamento!</h1>
-    <p>O Mercado Pago está confirmando seu pagamento. Assim que aprovado, o material será enviado <b>automaticamente</b> para o seu e-mail.</p>
+    <h1 id="status-title">Processando seu Material...</h1>
+    <p id="status-text">O Mercado Pago está confirmando seu pagamento. Assim que aprovado, o material será enviado <b>automaticamente</b> para o seu e-mail.</p>
     
     <p style="font-size: 14px; background: #eee; padding: 10px; border-radius: 10px;">
         📌 <b>Dica:</b> Verifique sua <b>Caixa de Entrada</b> e também a pasta de <b>Spam/Lixo Eletrônico</b>.
@@ -36,9 +36,31 @@
 </div>
 
 <script>
-    // Limpamos a memória para evitar que o banner de "material pronto" fique aparecendo sem necessidade
-    localStorage.removeItem('pdf_pendente');
-    localStorage.removeItem('email_cliente');
+    // CONFIGURAÇÃO DO SEU ROBÔ
+    const scriptURL = "https://script.google.com/macros/s/AKfycby8bYY-SndmN8ChrUQXbBAFYOkmRww8JuSNtqUJsC09bRXofpIh5obDmZ4o3qIuysXg/exec";
+    
+    // Pegamos os dados que o index.html salvou antes do pagamento
+    const email = localStorage.getItem('email_cliente');
+    const pdf = localStorage.getItem('pdf_pendente');
+
+    if (email && pdf) {
+        // Disparamos o aviso para o Google Script enviar o e-mail
+        fetch(`${scriptURL}?email=${encodeURIComponent(email)}&link=${encodeURIComponent(pdf)}&material=Material Pedagógico`)
+        .then(response => {
+            console.log("Comando enviado ao robô!");
+            document.getElementById('status-title').innerText = "Tudo Certo! 🦉";
+            document.getElementById('status-text').innerHTML = "Seu material foi disparado para o e-mail: <b>" + email + "</b>. Verifique sua caixa de entrada agora!";
+        })
+        .catch(error => {
+            console.error("Erro ao avisar robô:", error);
+        });
+    }
+
+    // Limpamos a memória após 10 segundos para não dar erro em futuras compras
+    setTimeout(() => {
+        localStorage.removeItem('pdf_pendente');
+        localStorage.removeItem('email_cliente');
+    }, 10000);
 </script>
 
 </body>
