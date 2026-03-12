@@ -37,33 +37,37 @@
 
 <script>
     const params = new URLSearchParams(window.location.search);
-    const status = params.get('collection_status'); // 'approved', 'pending', etc.
+    
+    // O Mercado Pago pode enviar o status em qualquer um desses 3 nomes:
+    const status = params.get('collection_status') || params.get('status') || params.get('payment_status');
 
     const loader = document.getElementById('loader');
     const resultado = document.getElementById('resultado');
 
+    // Simula uma pequena espera para dar tempo do sistema processar
     setTimeout(() => {
         loader.style.display = 'none';
         resultado.style.display = 'block';
 
-        if (status === 'approved') {
+        // Se o status for aprovado ou se o Mercado Pago enviou um ID de pagamento de sucesso
+        if (status === 'approved' || status === 'success') {
             document.getElementById('status-icon').innerText = "✅";
             document.getElementById('status-title').innerText = "Pagamento Confirmado!";
             document.getElementById('status-msg').className = "status-box approved";
-            document.getElementById('status-msg').innerHTML = "<b>Tudo pronto!</b> O material foi enviado para o seu e-mail. Se não encontrar, verifique a pasta de Spam.";
+            document.getElementById('status-msg').innerHTML = "<b>Tudo pronto!</b> O material foi enviado para o seu e-mail. Verifique sua caixa de entrada e também a pasta de <b>Spam</b>.";
             
-            // Limpa o cache para segurança
             localStorage.removeItem('pdf_pendente');
             localStorage.removeItem('email_cliente');
         } else {
+            // Se cair aqui, mostramos o pendente com o botão de suporte
             document.getElementById('status-icon').innerText = "⏳";
-            document.getElementById('status-title').innerText = "Aguardando Pix...";
+            document.getElementById('status-title').innerText = "Processando Pagamento...";
             document.getElementById('status-msg').className = "status-box pending";
-            document.getElementById('status-msg').innerHTML = "Ainda não detectamos o pagamento. Se você já pagou, aguarde alguns instantes ou entre em contato com o suporte.";
+            document.getElementById('status-msg').innerHTML = "O Pix foi gerado! Se você já pagou, aguarde 1 minuto. O material será enviado para o seu e-mail automaticamente assim que o banco confirmar.";
             document.getElementById('btn-suporte').style.display = "block";
         }
-    }, 2000); // 2 segundos de "charme" para simular a verificação
+    }, 2500);
 </script>
-
 </body>
 </html>
+
