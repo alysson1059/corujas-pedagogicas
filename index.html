@@ -699,11 +699,12 @@ window.fecharImagem = () => {
 document.getElementById("imgModal").classList.remove("active");
 }
 
-    // Abre o relatório e busca os dados atuais no Firebase
-window.abrirRelatorio = async () => {
-    const snap = await getDoc(statsRef);
-    if (snap.exists()) {
-        const d = snap.data();
+   window.abrirRelatorio = async () => {
+    // O site agora vai ler do mesmo lugar que o Google Script escreve
+    const response = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
+    const d = await response.json();
+    
+    if (d) {
         document.getElementById('stat-visitas').innerText = d.visitas || 0;
         document.getElementById('stat-gratis').innerText = d.gratis || 0;
         document.getElementById('stat-pendentes').innerText = d.pendentes || 0;
