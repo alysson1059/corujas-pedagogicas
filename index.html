@@ -343,15 +343,16 @@ outline:none;
 /* ADMIN */
 
 /* Esconde por padrão */
+/* Esconde para todo mundo por padrão */
 .admin-zone {
-    display: none; 
+    display: none !important;
     padding: 12px 15px;
     background: #fafafa;
     border-top: 1px solid #eee;
     justify-content: space-between;
 }
 
-/* Só mostra se o corpo da página tiver a classe "admin-logado" */
+/* MOSTRA APENAS SE O BODY TIVER A CLASSE DE ADMIN */
 body.admin-logado .admin-zone {
     display: flex !important;
 }
@@ -678,27 +679,24 @@ contarVisita();
         const filtrados = materiaisGeral.filter(m => {
             return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
         });
-        filtrados.forEach(m => {
-    // Verificamos o login direto aqui dentro
-    const estaLogado = auth.currentUser ? 'flex' : 'none';
-    
-    vitrine.innerHTML += `
-    <div class="card">
-        <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
-        <div class="info">
-            <small>${m.categoria}</small>
-            <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="price">R$ ${m.preco}</span>
-                <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
-            </div>
-        </div>
-        <div class="admin-zone">
-            <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-            <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-        </div>
-    </div>`;
-});
+       filtrados.forEach(m => {
+            vitrine.innerHTML += `
+                <div class="card">
+                    <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
+                    <div class="info">
+                        <small>${m.categoria}</small>
+                        <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="price">R$ ${m.preco}</span>
+                            <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+                        </div>
+                    </div>
+                    <div class="admin-zone">
+                        <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
+                        <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+                    </div>
+                </div>`;
+        });
     }
 
     // --- MONITORAMENTO ---
@@ -777,22 +775,23 @@ onAuthStateChanged(auth, (user) => {
     const dashboardBtn = document.getElementById("admin-dashboard-btn");
     
     if (user) {
-        // Se tem usuário, coloca a classe no BODY e mostra tudo de uma vez
+        // ESSA LINHA É A DEFINITIVA:
         document.body.classList.add("admin-logado");
+        
         if(loginBtn) loginBtn.style.display = "none";
         if(userView) userView.style.display = "flex";
         if(dashboardBtn) dashboardBtn.style.display = "block";
     } else {
-        // Se deslogou, remove a classe
         document.body.classList.remove("admin-logado");
+        
         if(loginBtn) loginBtn.style.display = "block";
         if(userView) userView.style.display = "none";
         if(dashboardBtn) dashboardBtn.style.display = "none";
     }
     
-    renderizar();
-    if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
+    renderizar(); // Redesenha a vitrine uma última vez com a classe já aplicada
 });
+    
 </script>
 
     <div class="img-modal" id="imgModal" onclick="fecharImagem()">
