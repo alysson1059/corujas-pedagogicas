@@ -16,6 +16,18 @@
     z-index: 3000;
 }
 
+        /* Estilo do botão do Instagram no topo */
+.btn-instagram {
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-instagram:hover {
+    transform: scale(1.2); /* Ele aumenta um pouquinho quando passa o mouse */
+}
+
 #admin-dashboard-btn button {
     background: #F08080;
     color: white;
@@ -425,6 +437,11 @@ display:flex;
         <img src="coruja.png">
         <h1>Corujices Pedagógicas</h1>
     </a>
+
+    <div class="menu" style="display: flex; align-items: center; gap: 15px;">
+        <a href="https://www.instagram.com/corujices_pedagogicas_/" target="_blank" class="btn-instagram" title="Siga-nos no Instagram">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="height: 25px; width: 25px; vertical-align: middle;">
+        </a>
     <div class="menu">
         <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Vendedor</button>
         <div id="user-logged-view" class="user-info" style="display:none;">
