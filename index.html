@@ -763,26 +763,27 @@ window.fecharRelatorio = () => {
 // Faz o botão 📊 aparecer só para você quando logar
 onAuthStateChanged(auth, (user) => {
     authPronto = true;
+
     const loginBtn = document.getElementById("btn-login-view");
     const userView = document.getElementById("user-logged-view");
     const dashboardBtn = document.getElementById("admin-dashboard-btn");
-    
+
     if (user) {
-        // ESSA LINHA É A DEFINITIVA:
         document.body.classList.add("admin-logado");
-        
+
         if(loginBtn) loginBtn.style.display = "none";
         if(userView) userView.style.display = "flex";
         if(dashboardBtn) dashboardBtn.style.display = "block";
+
     } else {
         document.body.classList.remove("admin-logado");
-        
+
         if(loginBtn) loginBtn.style.display = "block";
         if(userView) userView.style.display = "none";
         if(dashboardBtn) dashboardBtn.style.display = "none";
     }
-    
-    renderizar(); // Redesenha a vitrine uma última vez com a classe já aplicada
+
+    setTimeout(renderizar, 50);
 });
     
 </script>
