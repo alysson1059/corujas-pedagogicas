@@ -413,8 +413,11 @@ display:flex;
 </head>
 <body>
 
-<div id="aviso-pendente" onclick="window.location.href='sucesso.html'">
-    🦉 Notamos um material pronto para download! Clique aqui para baixar.
+<div id="aviso-pendente" style="display:none; background:#F08080; color:white; text-align:center; padding:12px; font-weight:600; position:relative;">
+    <span onclick="window.location.href='sucesso.html'" style="cursor:pointer;">
+        🦉 Notamos um material pronto para download! Clique aqui para baixar.
+    </span>
+    <button onclick="limparAvisoPendente(event)" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer; font-weight:bold; padding:5px 10px;">×</button>
 </div>
 
 <header>
@@ -698,6 +701,21 @@ document.getElementById("imgModal").classList.add("active");
 window.fecharImagem = () => {
 document.getElementById("imgModal").classList.remove("active");
 }
+
+    // COLE ESTA FUNÇÃO NO FINAL DO SEU SCRIPT
+window.limparAvisoPendente = (event) => {
+    // O stopPropagation impede que o clique no X também abra o link do PDF
+    event.stopPropagation(); 
+    
+    if(confirm("Deseja remover este aviso? Se você ainda não baixou o material, poderá encontrá-lo no seu e-mail.")) {
+        // Limpa as gavetinhas da memória
+        localStorage.removeItem('pdf_pendente');
+        localStorage.removeItem('email_cliente');
+        
+        // Esconde a barra visualmente
+        document.getElementById('aviso-pendente').style.display = 'none';
+    }
+};
 
    window.abrirRelatorio = async () => {
     // 1. Busca Pagos e Pendentes do Realtime Database (Google Script)
