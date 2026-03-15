@@ -342,12 +342,12 @@ outline:none;
 
 /* ADMIN */
 
-.admin-zone{
-display:none;
-padding:12px 15px;
-background:#fafafa;
-border-top:1px solid #eee;
-justify-content:space-between;
+.admin-zone {
+    padding: 12px 15px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    justify-content: space-between;
+
 }
 
 .btn-adm{
@@ -442,7 +442,7 @@ display:flex;
         <a href="https://www.instagram.com/corujices_pedagogicas_/" target="_blank" class="btn-instagram" title="Siga-nos no Instagram">
             <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="height: 25px; width: 25px; vertical-align: middle;">
         </a>
-    <div class="menu">
+        
         <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Vendedor</button>
         <div id="user-logged-view" class="user-info" style="display:none;">
             <button class="btn-anunciar" onclick="abrirModalCadastro()">+ Novo Material</button>
@@ -673,23 +673,24 @@ contarVisita();
             return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
         });
         filtrados.forEach(m => {
+            console.log("Usuário logado?", auth.currentUser); // Adicione isso para testar
             const admin = auth.currentUser ? 'flex' : 'none';
-            vitrine.innerHTML += `
-                <div class="card">
-                    <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
-                    <div class="info">
-                        <small>${m.categoria}</small>
-                        <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span class="price">R$ ${m.preco}</span>
-                            <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
-                        </div>
-                    </div>
-                    <div class="admin-zone" style="display:${admin}">
-                        <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-                        <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-                    </div>
-                </div>`;
+           vitrine.innerHTML += `
+    <div class="card">
+        <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
+        <div class="info">
+            <small>${m.categoria}</small>
+            <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="price">R$ ${m.preco}</span>
+                <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+            </div>
+        </div>
+        <div class="admin-zone" style="display: ${auth.currentUser ? 'flex' : 'none'}">
+            <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
+            <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+        </div>
+    </div>`;
         });
     }
 
