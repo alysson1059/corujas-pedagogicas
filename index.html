@@ -200,8 +200,10 @@ box-shadow:0 20px 40px rgba(0,0,0,0.08);
 
 .card img{
 width:100%;
-aspect-ratio:1/1;
+height:220px;
 object-fit:cover;
+display:block;
+cursor:pointer;
 }
 
 /* INFO */
@@ -351,6 +353,31 @@ margin-bottom:5px;
 footer p:last-child{
 font-size:14px;
 color:#777;
+}
+
+        /* EXPANDIR IMAGEM */
+
+.img-modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+justify-content:center;
+align-items:center;
+z-index:3000;
+}
+
+.img-modal img{
+max-width:90%;
+max-height:90%;
+border-radius:10px;
+}
+
+.img-modal.active{
+display:flex;
 }
 
 </style>
@@ -580,7 +607,7 @@ color:#777;
             const admin = auth.currentUser ? 'flex' : 'none';
             vitrine.innerHTML += `
                 <div class="card">
-                    <img src="${m.imagem}">
+                    <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
                     <div class="info">
                         <small>${m.categoria}</small>
                         <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
@@ -618,6 +645,19 @@ color:#777;
         v = v.replace(".", ",");
         i.value = v;
     };
+
+    window.abrirImagem = (src) => {
+document.getElementById("imgExpandida").src = src;
+document.getElementById("imgModal").classList.add("active");
+}
+
+window.fecharImagem = () => {
+document.getElementById("imgModal").classList.remove("active");
+}
 </script>
+
+    <div class="img-modal" id="imgModal" onclick="fecharImagem()">
+    <img id="imgExpandida">
+</div>
 </body>
 </html>
