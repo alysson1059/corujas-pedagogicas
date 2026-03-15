@@ -673,25 +673,26 @@ contarVisita();
             return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
         });
         filtrados.forEach(m => {
-            console.log("Usuário logado?", auth.currentUser); // Adicione isso para testar
-            const admin = auth.currentUser ? 'flex' : 'none';
-           vitrine.innerHTML += `
-    <div class="card">
-        <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
-        <div class="info">
-            <small>${m.categoria}</small>
-            <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="price">R$ ${m.preco}</span>
-                <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+    // Verificamos o login direto aqui dentro
+    const estaLogado = auth.currentUser ? 'flex' : 'none';
+    
+    vitrine.innerHTML += `
+        <div class="card">
+            <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
+            <div class="info">
+                <small>${m.categoria}</small>
+                <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="price">R$ ${m.preco}</span>
+                    <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
+                </div>
             </div>
-        </div>
-        <div class="admin-zone" style="display: ${auth.currentUser ? 'flex' : 'none'}">
-            <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-            <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-        </div>
-    </div>`;
-        });
+            <div class="admin-zone" style="display: ${estaLogado}">
+                <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
+                <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+            </div>
+        </div>`;
+});
     }
 
     // --- MONITORAMENTO ---
