@@ -17,6 +17,27 @@ font-family:'Poppins',sans-serif;
 body{
 background:#f5f6fa;
 color:#2d3436;
+position:relative;
+}
+
+/* BACKGROUND CORUJINHAS */
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+background-image:url("corujinhas-bg.png"); /* imagem do pattern */
+background-repeat:repeat;
+background-size:160px;
+
+opacity:0.05; /* transparência das corujinhas */
+
+pointer-events:none;
+z-index:-1;
 }
 
 /* HEADER */
