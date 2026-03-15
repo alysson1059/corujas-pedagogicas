@@ -15,7 +15,6 @@
     right: 20px;
     z-index: 3000;
 }
-        
 
         /* Estilo do botão do Instagram no topo */
 .btn-instagram {
@@ -343,8 +342,10 @@ outline:none;
 
 /* ADMIN */
 
+/* Esconde por padrão */
+/* Esconde para todo mundo por padrão */
 .admin-zone {
-    display: none;
+    display: none !important;
     padding: 12px 15px;
     background: #fafafa;
     border-top: 1px solid #eee;
@@ -558,7 +559,6 @@ contarVisita();
 
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
-    let authPronto = false;
 
   window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
     const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
@@ -599,6 +599,15 @@ contarVisita();
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
 
+    // --- AUTENTICAÇÃO ---
+    onAuthStateChanged(auth, (user) => {
+        const loginBtn = document.getElementById("btn-login-view");
+        const userView = document.getElementById("user-logged-view");
+        if(loginBtn) loginBtn.style.display = user ? "none" : "block";
+        if(userView) userView.style.display = user ? "flex" : "none";
+        renderizar();
+        if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
+    });
 
     window.fazerLogin = async () => {
         const e = prompt("Email:"), s = prompt("Senha:");
@@ -608,54 +617,72 @@ contarVisita();
 
     // --- CADASTRO ---
     window.abrirModalCadastro = (d = null) => {
-        document.getElementById('modalCadastro').style.display = 'flex';
-        if(d) {
-            document.getElementById('editId').value = d.id;
-            document.getElementById('nomeMat').value = d.nome;
-            document.getElementById('descMat').value = d.descricao;
-            document.getElementById('precoMat').value = d.preco;
-            document.getElementById('novaCat').value = d.categoria;
-        } else {
-            document.getElementById('editId').value = "";
-            document.getElementById('nomeMat').value = "";
-            document.getElementById('descMat').value = "";
-            document.getElementById('precoMat').value = "";
-            document.getElementById('novaCat').value = "";
-        }
-    };
+    document.getElementById('modalCadastro').style.display = 'flex';
+    
+    // ATUALIZA O DATALIST COM CATEGORIAS EXISTENTES
+    const lista = document.getElementById('listaCategorias');
+    const categoriasUnicas = [...new Set(materiaisGeral.map(m => m.categoria))];
+    lista.innerHTML = categoriasUnicas.map(cat => `<option value="${cat}">`).join('');
+
+    if(d) {
+        document.getElementById('editId').value = d.id;
+        document.getElementById('nomeMat').value = d.nome;
+        document.getElementById('descMat').value = d.descricao;
+        document.getElementById('precoMat').value = d.preco;
+        document.getElementById('novaCat').value = d.categoria;
+    } else {
+        document.getElementById('editId').value = "";
+        document.getElementById('nomeMat').value = "";
+        document.getElementById('descMat').value = "";
+        document.getElementById('precoMat').value = "0,00"; // Padrão grátis
+        document.getElementById('novaCat').value = "Grátis";
+    }
+};
 
     window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
 
-    window.salvarMaterial = async () => {
-        const btn = document.getElementById('btnPublicar');
-        btn.innerText = "Salvando...";
-        const id = document.getElementById('editId').value;
-        const fileImg = document.getElementById('fileImg').files[0];
-        const filePdf = document.getElementById('filePdf').files[0];
+   window.salvarMaterial = async () => {
+    const btn = document.getElementById('btnPublicar');
+    btn.innerText = "Salvando...";
+    const id = document.getElementById('editId').value;
+    const preco = document.getElementById('precoMat').value;
+    let categoriaInformada = document.getElementById('novaCat').value.trim();
 
-        let dados = {
-            nome: document.getElementById('nomeMat').value,
-            descricao: document.getElementById('descMat').value,
-            preco: document.getElementById('precoMat').value,
-            categoria: document.getElementById('novaCat').value || "Geral",
-            data: new Date()
-        };
+    // LÓGICA AUTOMÁTICA DE CATEGORIA
+    if (preco === "0,00" || preco === "0" || !preco) {
+        categoriaInformada = "Grátis";
+    } else if (categoriaInformada === "Grátis") {
+        // Se tem preço mas a categoria era Grátis, muda para Pago
+        categoriaInformada = "Arquivos Pagos";
+    }
 
-        if(fileImg) {
-            const r = ref(storage, `capas/${Date.now()}`);
-            await uploadBytes(r, fileImg);
-            dados.imagem = await getDownloadURL(r);
-        }
-        if(filePdf) {
-            const r = ref(storage, `pdfs/${Date.now()}`);
-            await uploadBytes(r, filePdf);
-            dados.pdfUrl = await getDownloadURL(r);
-        }
-
-        if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
-        else { await addDoc(collection(db, "materiais"), dados); }
-        location.reload();
+    let dados = {
+        nome: document.getElementById('nomeMat').value,
+        descricao: document.getElementById('descMat').value,
+        preco: preco,
+        categoria: categoriaInformada || "Geral",
+        data: new Date()
     };
+
+    // ... (Mantenha o código de upload de imagem e PDF que você já tem)
+    const fileImg = document.getElementById('fileImg').files[0];
+    const filePdf = document.getElementById('filePdf').files[0];
+
+    if(fileImg) {
+        const r = ref(storage, `capas/${Date.now()}`);
+        await uploadBytes(r, fileImg);
+        dados.imagem = await getDownloadURL(r);
+    }
+    if(filePdf) {
+        const r = ref(storage, `pdfs/${Date.now()}`);
+        await uploadBytes(r, filePdf);
+        dados.pdfUrl = await getDownloadURL(r);
+    }
+
+    if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
+    else { await addDoc(collection(db, "materiais"), dados); }
+    location.reload();
+};
 
     window.excluirMaterial = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "materiais", id)); };
     window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
@@ -663,7 +690,6 @@ contarVisita();
 
     // --- RENDERIZAÇÃO ---
     function renderizar() {
-        if(!authPronto) return;
         const vitrine = document.getElementById("vitrine");
         if(!vitrine) return;
         const busca = document.getElementById("inputBusca").value.toLowerCase();
@@ -693,17 +719,21 @@ contarVisita();
 
     // --- MONITORAMENTO ---
     onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
-        materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
-        const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
-        const menu = document.getElementById("menuCategorias");
-        if (menu) {
-            menu.innerHTML = "";
-            cats.forEach(c => {
-                menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#FFC1CC':'#eee'}; color:${categoriaAtual===c?'#4A4A4A':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
-            });
-        }
-        renderizar();
-    });
+    materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    
+    // CATEGORIAS FIXAS NO INÍCIO + AS OUTRAS QUE VOCÊ CRIAR
+    const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))].filter(c => c !== "Grátis" && c !== "Arquivos Pagos");
+    const cats = ["Todos", "Grátis", "Arquivos Pagos", ...outrasCategorias];
+    
+    const menu = document.getElementById("menuCategorias");
+    if (menu) {
+        menu.innerHTML = "";
+        cats.forEach(c => {
+            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#F08080':'#eee'}; color:${categoriaAtual===c?'white':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
+        });
+    }
+    renderizar();
+});
 
     window.mascaraPreco = (i) => {
         if (!i.value) return;
@@ -762,28 +792,26 @@ window.fecharRelatorio = () => {
 
 // Faz o botão 📊 aparecer só para você quando logar
 onAuthStateChanged(auth, (user) => {
-    authPronto = true;
-
     const loginBtn = document.getElementById("btn-login-view");
     const userView = document.getElementById("user-logged-view");
     const dashboardBtn = document.getElementById("admin-dashboard-btn");
-
+    
     if (user) {
+        // ESSA LINHA É A DEFINITIVA:
         document.body.classList.add("admin-logado");
-
+        
         if(loginBtn) loginBtn.style.display = "none";
         if(userView) userView.style.display = "flex";
         if(dashboardBtn) dashboardBtn.style.display = "block";
-
     } else {
         document.body.classList.remove("admin-logado");
-
+        
         if(loginBtn) loginBtn.style.display = "block";
         if(userView) userView.style.display = "none";
         if(dashboardBtn) dashboardBtn.style.display = "none";
     }
-
-    setTimeout(renderizar, 50);
+    
+    renderizar(); // Redesenha a vitrine uma última vez com a classe já aplicada
 });
     
 </script>
