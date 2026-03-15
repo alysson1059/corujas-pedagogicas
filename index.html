@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corujices Pedagógicas | Loja Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    /* Botão flutuante do Relatório */
+#admin-dashboard-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 3000;
+}
+
+#admin-dashboard-btn button {
+    background: #F08080;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Ajuste para o texto do relatório ficar alinhado */
+#stats-content p {
+    margin: 10px 0;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 5px;
+}
     <style>
 
 *{
@@ -444,6 +471,23 @@ display:flex;
     </div>
 </div>
 
+    <div id="admin-dashboard-btn" style="display:none;">
+    <button onclick="abrirRelatorio()" title="Ver Relatório">📊</button>
+</div>
+
+<div class="modal" id="modalRelatorio">
+    <div class="modal-content" style="max-width:400px;">
+        <h2 style="color:#F08080; margin-bottom:20px;">Relatório Corujices 🦉</h2>
+        <div id="stats-content" style="text-align:left;">
+            <p>👁️ <b>Visitas Totais:</b> <span id="stat-visitas">0</span></p>
+            <p>🎁 <b>Downloads Grátis:</b> <span id="stat-gratis">0</span></p>
+            <p>⏳ <b>Pagamentos Pendentes:</b> <span id="stat-pendentes">0</span></p>
+            <p>💰 <b>Vendas Concluídas:</b> <span id="stat-pagos">0</span></p>
+        </div>
+        <button onclick="fecharRelatorio()" class="btn-vendedor" style="width:100%; margin-top:20px;">Fechar</button>
+    </div>
+</div>
+
     <footer style="text-align: center; padding: 40px 6%; background: white; margin-top: 50px; border-top: 1px solid #eee;">
     <p style="font-weight: 700; color: #333; margin-bottom: 5px;">
         © 2026 Corujices Pedagógicas
@@ -456,7 +500,7 @@ display:flex;
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, updateDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+   import { getFirestore, collection, addDoc, updateDoc, onSnapshot, query, orderBy, deleteDoc, doc, increment, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -473,13 +517,22 @@ display:flex;
     const db = getFirestore(app);
     const storage = getStorage(app);
 
+    const statsRef = doc(db, "estatisticas", "geral");
+async function contarVisita() {
+    // Toda vez que alguém entra no site, soma +1 em visitas no Firebase
+    await setDoc(statsRef, { visitas: increment(1) }, { merge: true });
+}
+contarVisita();
+
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
 
-    // --- FUNÇÃO DE COMPRA ---
-   window.prepararCompra = (pdfUrl, nomeItem, preco) => {
+  window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
     const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
+    
     if (valorNumerico === 0) {
+        // Se for grátis, avisa o Firebase para somar +1 em 'gratis'
+        await updateDoc(statsRef, { gratis: increment(1) });
         alert("🦉 Este material é gratuito!");
         window.open(pdfUrl, '_blank');
         return;
@@ -490,34 +543,23 @@ display:flex;
         const email = document.getElementById('emailCliente').value;
         if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
 
+        // Se clicou para pagar, soma +1 em 'pendentes'
+        await updateDoc(statsRef, { pendentes: increment(1) });
+
         const btn = document.getElementById('btnConfirmarEmail');
         btn.innerText = "Gerando Pagamento...";
         btn.disabled = true;
 
-        // GARANTIA: Salva o PDF real para caso o e-mail falhe
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
-        // USE O LINK DA SUA ÚLTIMA IMPLANTAÇÃO (A QUE TERMINA EM ...SNxKHA/exec)
         const scriptURL = "https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec"; 
-        
-        // CORREÇÃO AQUI: Passamos o pdfUrl limpo para o Mercado Pago
         const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
 
         fetch(scriptURL + params)
             .then(res => res.text())
             .then(linkOficial => {
-                if (linkOficial.includes("http")) {
-                    window.location.href = linkOficial;
-                } else {
-                    throw new Error(linkOficial);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Erro ao gerar pagamento.");
-                btn.innerText = "IR PARA O PAGAMENTO";
-                btn.disabled = false;
+                if (linkOficial.includes("http")) { window.location.href = linkOficial; }
             });
     };
 };
@@ -655,6 +697,37 @@ document.getElementById("imgModal").classList.add("active");
 window.fecharImagem = () => {
 document.getElementById("imgModal").classList.remove("active");
 }
+
+    // Abre o relatório e busca os dados atuais no Firebase
+window.abrirRelatorio = async () => {
+    const snap = await getDoc(statsRef);
+    if (snap.exists()) {
+        const d = snap.data();
+        document.getElementById('stat-visitas').innerText = d.visitas || 0;
+        document.getElementById('stat-gratis').innerText = d.gratis || 0;
+        document.getElementById('stat-pendentes').innerText = d.pendentes || 0;
+        document.getElementById('stat-pagos').innerText = d.pagos || 0;
+    }
+    document.getElementById('modalRelatorio').style.display = 'flex';
+};
+
+window.fecharRelatorio = () => {
+    document.getElementById('modalRelatorio').style.display = 'none';
+};
+
+// Faz o botão 📊 aparecer só para você quando logar
+onAuthStateChanged(auth, (user) => {
+    const loginBtn = document.getElementById("btn-login-view");
+    const userView = document.getElementById("user-logged-view");
+    const dashboardBtn = document.getElementById("admin-dashboard-btn");
+    
+    if(loginBtn) loginBtn.style.display = user ? "none" : "block";
+    if(userView) userView.style.display = user ? "flex" : "none";
+    if(dashboardBtn) dashboardBtn.style.display = user ? "block" : "none";
+    
+    renderizar();
+    if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
+});
 </script>
 
     <div class="img-modal" id="imgModal" onclick="fecharImagem()">
