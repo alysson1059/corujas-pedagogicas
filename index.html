@@ -599,15 +599,6 @@ contarVisita();
 
     window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
 
-    // --- AUTENTICAÇÃO ---
-    onAuthStateChanged(auth, (user) => {
-        const loginBtn = document.getElementById("btn-login-view");
-        const userView = document.getElementById("user-logged-view");
-        if(loginBtn) loginBtn.style.display = user ? "none" : "block";
-        if(userView) userView.style.display = user ? "flex" : "none";
-        renderizar();
-        if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
-    });
 
     window.fazerLogin = async () => {
         const e = prompt("Email:"), s = prompt("Senha:");
