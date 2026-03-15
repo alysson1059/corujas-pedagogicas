@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corujices Pedagógicas | Loja Oficial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-   <style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Corujices Pedagógicas | Loja Oficial</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
 
 *{
 margin:0;
@@ -15,7 +20,7 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f5f6fa;
+background:#f6f8fb;
 color:#2d3436;
 }
 
@@ -23,11 +28,11 @@ color:#2d3436;
 
 header{
 background:white;
-padding:16px 6%;
+padding:18px 6%;
 display:flex;
 align-items:center;
 justify-content:space-between;
-box-shadow:0 4px 20px rgba(0,0,0,0.05);
+box-shadow:0 8px 30px rgba(0,0,0,0.05);
 position:sticky;
 top:0;
 z-index:1000;
@@ -38,16 +43,15 @@ display:flex;
 align-items:center;
 gap:12px;
 text-decoration:none;
-color:#333;
 }
 
 .logo img{
-height:48px;
+height:46px;
 }
 
 .logo h1{
-color:#F08080;
 font-size:20px;
+color:#F08080;
 font-weight:700;
 }
 
@@ -55,560 +59,513 @@ font-weight:700;
 
 .btn-vendedor,
 .btn-anunciar{
+
 background:#F08080;
 color:white;
+border:none;
 padding:10px 22px;
 border-radius:30px;
-cursor:pointer;
 font-size:13px;
 font-weight:600;
-text-decoration:none;
-border:none;
-transition:0.3s;
-box-shadow:0 4px 10px rgba(240,128,128,0.3);
+cursor:pointer;
+
+transition:0.25s;
+
+box-shadow:0 6px 15px rgba(240,128,128,0.25);
 }
 
 .btn-vendedor:hover,
 .btn-anunciar:hover{
+
 transform:translateY(-2px);
-box-shadow:0 6px 18px rgba(240,128,128,0.35);
+
+box-shadow:0 10px 25px rgba(240,128,128,0.35);
+
 }
 
 /* HERO */
 
 .hero{
+
 text-align:center;
-padding:70px 6% 40px;
+
+padding:80px 6% 50px;
+
 background:white;
+
 border-bottom:1px solid #eee;
+
 }
 
 .hero h2{
-font-size:32px;
+
+font-size:34px;
+
 font-weight:700;
+
 margin-bottom:10px;
+
 }
 
 .hero p{
-font-size:16px;
+
 color:#666;
-margin-top:10px;
-max-width:600px;
-margin-left:auto;
-margin-right:auto;
+
+max-width:650px;
+
+margin:auto;
+
+font-size:16px;
+
 }
 
 /* BUSCA */
 
 .search-container{
-max-width:600px;
-margin:30px auto 20px;
+
+max-width:620px;
+
+margin:35px auto;
+
+position:relative;
+
 }
 
 .search-container input{
+
 width:100%;
+
 padding:18px 25px;
+
 border-radius:40px;
+
 border:2px solid #eee;
-outline:none;
+
 font-size:14px;
+
+outline:none;
+
 transition:0.3s;
-background:#fafafa;
+
 }
 
 .search-container input:focus{
+
 border-color:#F08080;
-background:white;
-box-shadow:0 4px 15px rgba(0,0,0,0.05);
+
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+
 }
 
 /* CATEGORIAS */
 
 .categories-menu{
-margin-top:20px;
+
 display:flex;
+
 justify-content:center;
+
 flex-wrap:wrap;
+
 gap:10px;
+
+margin-top:15px;
+
 }
 
 .categories-menu button{
-padding:8px 18px;
-border-radius:25px;
+
 border:none;
-background:#eee;
-color:#555;
+
+padding:9px 18px;
+
+border-radius:25px;
+
+background:#f0f2f5;
+
 font-size:13px;
+
 cursor:pointer;
+
 transition:0.3s;
+
 }
 
 .categories-menu button:hover{
+
 background:#F08080;
+
 color:white;
+
 }
 
-/* VITRINE */
+/* STORE */
 
 .store{
+
 max-width:1200px;
+
 margin:auto;
-padding:50px 6%;
+
+padding:60px 6%;
+
 display:grid;
+
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:28px;
+
+gap:30px;
+
 }
 
-/* CARD PRODUTO */
+/* CARD */
 
 .card{
+
 background:white;
+
 border-radius:16px;
+
 overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
+
+box-shadow:0 15px 40px rgba(0,0,0,0.06);
+
 transition:0.35s;
+
 display:flex;
+
 flex-direction:column;
+
 }
 
 .card:hover{
-transform:translateY(-6px);
-box-shadow:0 20px 40px rgba(0,0,0,0.08);
+
+transform:translateY(-8px);
+
+box-shadow:0 25px 50px rgba(0,0,0,0.1);
+
 }
 
 .card img{
+
 width:100%;
+
 aspect-ratio:1/1;
+
 object-fit:cover;
+
 }
 
 /* INFO */
 
 .info{
+
 padding:20px;
+
 flex:1;
+
 display:flex;
+
 flex-direction:column;
+
 }
 
 .info small{
+
 color:#888;
+
 font-size:12px;
+
 }
 
 .info h3{
+
 font-size:16px;
-margin:8px 0 16px;
+
+margin:6px 0 16px;
+
 font-weight:600;
+
 min-height:40px;
+
 }
 
 /* PREÇO */
 
 .price{
+
 font-size:20px;
+
 font-weight:700;
+
 color:#2d3436;
+
 }
 
 /* BOTÃO COMPRA */
 
 .btn-buy{
+
 background:#F08080;
+
 color:white;
-padding:10px 22px;
-border-radius:25px;
+
 border:none;
-cursor:pointer;
-font-weight:600;
+
+padding:10px 22px;
+
+border-radius:25px;
+
 font-size:13px;
-transition:0.3s;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:0.25s;
+
 }
 
 .btn-buy:hover{
-background:#e96e6e;
+
 transform:scale(1.05);
-}
 
-/* MODAL */
+background:#ea6c6c;
 
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-justify-content:center;
-align-items:center;
-z-index:2000;
-backdrop-filter:blur(6px);
-}
-
-.modal-content{
-background:white;
-padding:40px;
-width:95%;
-max-width:450px;
-border-radius:18px;
-position:relative;
-text-align:center;
-box-shadow:0 20px 40px rgba(0,0,0,0.2);
-}
-
-/* INPUTS */
-
-input,
-textarea{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border:1px solid #ddd;
-border-radius:8px;
-font-size:14px;
-}
-
-input:focus,
-textarea:focus{
-border-color:#F08080;
-outline:none;
 }
 
 /* ADMIN */
 
 .admin-zone{
+
 display:none;
+
 padding:12px 15px;
+
 background:#fafafa;
+
 border-top:1px solid #eee;
+
 justify-content:space-between;
+
 }
 
 .btn-adm{
+
 font-size:11px;
+
 cursor:pointer;
+
 font-weight:700;
+
 border:none;
+
 background:none;
+
 color:#636e72;
+
 }
 
 .btn-adm:hover{
+
 color:#F08080;
+
 }
 
-/* AVISO DOWNLOAD */
+/* MODAL */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,0.65);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:2000;
+
+backdrop-filter:blur(6px);
+
+}
+
+.modal-content{
+
+background:white;
+
+padding:40px;
+
+width:95%;
+
+max-width:450px;
+
+border-radius:18px;
+
+text-align:center;
+
+box-shadow:0 25px 60px rgba(0,0,0,0.25);
+
+}
+
+/* INPUT */
+
+input,textarea{
+
+width:100%;
+
+padding:12px;
+
+margin-bottom:15px;
+
+border:1px solid #ddd;
+
+border-radius:8px;
+
+font-size:14px;
+
+}
+
+input:focus,
+
+textarea:focus{
+
+border-color:#F08080;
+
+outline:none;
+
+}
+
+/* AVISO */
 
 #aviso-pendente{
+
 display:none;
+
 background:#F08080;
+
 color:white;
+
 text-align:center;
+
 padding:12px;
+
 font-weight:600;
+
 cursor:pointer;
+
 }
 
 /* FOOTER */
 
 footer{
-text-align:center;
-padding:40px 6%;
+
 background:white;
-margin-top:60px;
+
+padding:40px 6%;
+
+text-align:center;
+
 border-top:1px solid #eee;
+
+margin-top:60px;
+
 }
 
 footer p:first-child{
+
 font-weight:700;
+
 color:#333;
+
 margin-bottom:5px;
+
 }
 
 footer p:last-child{
-font-size:14px;
+
 color:#777;
+
+font-size:14px;
+
 }
 
 </style>
+
 </head>
+
 <body>
 
 <div id="aviso-pendente" onclick="window.location.href='sucesso.html'">
-    🦉 Notamos um material pronto para download! Clique aqui para baixar.
+🦉 Notamos um material pronto para download! Clique aqui para baixar.
 </div>
 
 <header>
-    <a href="index.html" class="logo">
-        <img src="coruja.png">
-        <h1>Corujices Pedagógicas</h1>
-    </a>
-    <div class="menu">
-        <button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Vendedor</button>
-        <div id="user-logged-view" class="user-info" style="display:none;">
-            <button class="btn-anunciar" onclick="abrirModalCadastro()">+ Novo Material</button>
-            <button onclick="fazerLogout()" style="background:none; border:none; color:#ff7675; cursor:pointer; margin-left:10px;">Sair</button>
-        </div>
-    </div>
+
+<a href="index.html" class="logo">
+
+<img src="coruja.png">
+
+<h1>Corujices Pedagógicas</h1>
+
+</a>
+
+<div class="menu">
+
+<button id="btn-login-view" class="btn-vendedor" onclick="fazerLogin()">Vendedor</button>
+
+<div id="user-logged-view" class="user-info" style="display:none;">
+
+<button class="btn-anunciar" onclick="abrirModalCadastro()">+ Novo Material</button>
+
+<button onclick="fazerLogout()" style="background:none;border:none;color:#ff7675;margin-left:10px;cursor:pointer;">Sair</button>
+
+</div>
+
+</div>
+
 </header>
 
 <section class="hero">
-    <h2>Materiais Pedagógicos</h2>
-    
-    <p style="font-size: 16px; color: #666; margin-top: 10px; max-width: 600px; margin-left: auto; margin-right: auto;">
-        Atividades criativas para Educação Infantil.<br>
-        Baixe, imprima e use em sala de aula em minutos.
-    </p>
-    <div class="search-container">
-        <input type="text" id="inputBusca" placeholder="Pesquisar tema..." oninput="buscarMateriais()">
-    </div>
-    <div class="categories-menu" id="menuCategorias" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"></div>
+
+<h2>Materiais Pedagógicos</h2>
+
+<p>
+
+Atividades criativas para Educação Infantil.
+
+Baixe, imprima e use em sala de aula em minutos.
+
+</p>
+
+<div class="search-container">
+
+<input type="text" id="inputBusca" placeholder="Pesquisar material ou tema..." oninput="buscarMateriais()">
+
+</div>
+
+<div class="categories-menu" id="menuCategorias"></div>
+
 </section>
 
 <section class="store" id="vitrine"></section>
 
-<div class="modal" id="modalEmail">
-    <div class="modal-content">
-        <h2 style="margin-bottom:15px;">Quase lá! 🦉</h2>
-        <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material?</p>
-        <input type="email" id="emailCliente" placeholder="Seu melhor e-mail" required>
-        <button id="btnConfirmarEmail" class="btn-buy" style="width:100%;">IR PARA O PAGAMENTO</button>
-        <p style="font-size:11px; color:#999; margin-top:15px; cursor:pointer;" onclick="fecharModalEmail()">Cancelar</p>
-    </div>
-</div>
+<footer>
 
-<div class="modal" id="modalCadastro">
-    <div class="modal-content" style="max-width:500px; text-align:left;">
-        <h2 id="modalTitle">Novo Material</h2>
-        <input type="hidden" id="editId">
-        <input type="text" id="nomeMat" placeholder="Nome do material">
-        <textarea id="descMat" placeholder="Descrição"></textarea>
-        <input type="text" id="novaCat" list="listaCategorias" placeholder="Categoria">
-        <datalist id="listaCategorias"></datalist>
-        <input type="text" id="precoMat" placeholder="Preço" oninput="mascaraPreco(this)">
-        <label>Capa</label><input type="file" id="fileImg" accept="image/*">
-        <label>PDF</label><input type="file" id="filePdf" accept=".pdf">       
-        <button id="btnPublicar" class="btn-vendedor" style="width:100%;" onclick="salvarMaterial()">Salvar</button>
-        <button onclick="fecharModalCadastro()" style="width:100%; background:none; border:none; margin-top:10px; color:#999;">Fechar</button>
-    </div>
-</div>
+<p>© 2026 Corujices Pedagógicas</p>
 
-    <footer style="text-align: center; padding: 40px 6%; background: white; margin-top: 50px; border-top: 1px solid #eee;">
-    <p style="font-weight: 700; color: #333; margin-bottom: 5px;">
-        © 2026 Corujices Pedagógicas
-    </p>
-    <p style="font-size: 14px; color: #777;">
-        Materiais digitais para professores
-    </p>
+<p>Materiais digitais para professores</p>
+
 </footer>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, updateDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBNh-d3UTLAHs8G6IdjrAYzQUBYfTUysRU",
-        authDomain: "corujices-7d098.firebaseapp.com",
-        projectId: "corujices-7d098",
-        storageBucket: "corujices-7d098.firebasestorage.app",
-        messagingSenderId: "495106355719",
-        appId: "1:495106355719:web:7633ef1d51e4d73746f0a2"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    let materiaisGeral = [];
-    let categoriaAtual = "Todos";
-
-    // --- FUNÇÃO DE COMPRA ---
-   window.prepararCompra = (pdfUrl, nomeItem, preco) => {
-    const valorNumerico = parseFloat(preco.replace("R$ ", "").replace(",", "."));
-    if (valorNumerico === 0) {
-        alert("🦉 Este material é gratuito!");
-        window.open(pdfUrl, '_blank');
-        return;
-    }
-
-    document.getElementById('modalEmail').style.display = 'flex';
-    document.getElementById('btnConfirmarEmail').onclick = async () => {
-        const email = document.getElementById('emailCliente').value;
-        if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
-
-        const btn = document.getElementById('btnConfirmarEmail');
-        btn.innerText = "Gerando Pagamento...";
-        btn.disabled = true;
-
-        // GARANTIA: Salva o PDF real para caso o e-mail falhe
-        localStorage.setItem('email_cliente', email);
-        localStorage.setItem('pdf_pendente', pdfUrl);
-
-        // USE O LINK DA SUA ÚLTIMA IMPLANTAÇÃO (A QUE TERMINA EM ...SNxKHA/exec)
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec"; 
-        
-        // CORREÇÃO AQUI: Passamos o pdfUrl limpo para o Mercado Pago
-        const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
-
-        fetch(scriptURL + params)
-            .then(res => res.text())
-            .then(linkOficial => {
-                if (linkOficial.includes("http")) {
-                    window.location.href = linkOficial;
-                } else {
-                    throw new Error(linkOficial);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Erro ao gerar pagamento.");
-                btn.innerText = "IR PARA O PAGAMENTO";
-                btn.disabled = false;
-            });
-    };
-};
-
-    window.fecharModalEmail = () => document.getElementById('modalEmail').style.display = 'none';
-
-    // --- AUTENTICAÇÃO ---
-    onAuthStateChanged(auth, (user) => {
-        const loginBtn = document.getElementById("btn-login-view");
-        const userView = document.getElementById("user-logged-view");
-        if(loginBtn) loginBtn.style.display = user ? "none" : "block";
-        if(userView) userView.style.display = user ? "flex" : "none";
-        renderizar();
-        if(localStorage.getItem('pdf_pendente')) document.getElementById('aviso-pendente').style.display = 'block';
-    });
-
-    window.fazerLogin = async () => {
-        const e = prompt("Email:"), s = prompt("Senha:");
-        if(e && s) await signInWithEmailAndPassword(auth, e, s);
-    };
-    window.fazerLogout = () => signOut(auth);
-
-    // --- CADASTRO ---
-    window.abrirModalCadastro = (d = null) => {
-        document.getElementById('modalCadastro').style.display = 'flex';
-        if(d) {
-            document.getElementById('editId').value = d.id;
-            document.getElementById('nomeMat').value = d.nome;
-            document.getElementById('descMat').value = d.descricao;
-            document.getElementById('precoMat').value = d.preco;
-            document.getElementById('novaCat').value = d.categoria;
-        } else {
-            document.getElementById('editId').value = "";
-            document.getElementById('nomeMat').value = "";
-            document.getElementById('descMat').value = "";
-            document.getElementById('precoMat').value = "";
-            document.getElementById('novaCat').value = "";
-        }
-    };
-
-    window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
-
-    window.salvarMaterial = async () => {
-        const btn = document.getElementById('btnPublicar');
-        btn.innerText = "Salvando...";
-        const id = document.getElementById('editId').value;
-        const fileImg = document.getElementById('fileImg').files[0];
-        const filePdf = document.getElementById('filePdf').files[0];
-
-        let dados = {
-            nome: document.getElementById('nomeMat').value,
-            descricao: document.getElementById('descMat').value,
-            preco: document.getElementById('precoMat').value,
-            categoria: document.getElementById('novaCat').value || "Geral",
-            data: new Date()
-        };
-
-        if(fileImg) {
-            const r = ref(storage, `capas/${Date.now()}`);
-            await uploadBytes(r, fileImg);
-            dados.imagem = await getDownloadURL(r);
-        }
-        if(filePdf) {
-            const r = ref(storage, `pdfs/${Date.now()}`);
-            await uploadBytes(r, filePdf);
-            dados.pdfUrl = await getDownloadURL(r);
-        }
-
-        if(id) { await updateDoc(doc(db, "materiais", id), dados); } 
-        else { await addDoc(collection(db, "materiais"), dados); }
-        location.reload();
-    };
-
-    window.excluirMaterial = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "materiais", id)); };
-    window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
-    window.buscarMateriais = () => renderizar();
-
-    // --- RENDERIZAÇÃO ---
-    function renderizar() {
-        const vitrine = document.getElementById("vitrine");
-        if(!vitrine) return;
-        const busca = document.getElementById("inputBusca").value.toLowerCase();
-        vitrine.innerHTML = "";
-        const filtrados = materiaisGeral.filter(m => {
-            return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
-        });
-        filtrados.forEach(m => {
-            const admin = auth.currentUser ? 'flex' : 'none';
-            vitrine.innerHTML += `
-                <div class="card">
-                    <img src="${m.imagem}">
-                    <div class="info">
-                        <small>${m.categoria}</small>
-                        <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span class="price">R$ ${m.preco}</span>
-                            <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" class="btn-buy">ADQUIRIR</button>
-                        </div>
-                    </div>
-                    <div class="admin-zone" style="display:${admin}">
-                        <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-                        <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-                    </div>
-                </div>`;
-        });
-    }
-
-    // --- MONITORAMENTO ---
-    onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
-        materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
-        const cats = ["Todos", ...new Set(materiaisGeral.map(m => m.categoria))];
-        const menu = document.getElementById("menuCategorias");
-        if (menu) {
-            menu.innerHTML = "";
-            cats.forEach(c => {
-                menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#FFC1CC':'#eee'}; color:${categoriaAtual===c?'#4A4A4A':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
-            });
-        }
-        renderizar();
-    });
-
-    window.mascaraPreco = (i) => {
-        if (!i.value) return;
-        let v = i.value.replace(/\D/g,'');
-        v = (v/100).toFixed(2) + '';
-        v = v.replace(".", ",");
-        i.value = v;
-    };
-</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
