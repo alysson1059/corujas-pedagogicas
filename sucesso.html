@@ -1,94 +1,200 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status do Pedido | Corujices</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background: #f6f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 450px; width: 100%; text-align: center; }
-        .icon { font-size: 60px; margin-bottom: 20px; }
-       h1 { color: #f08080; font-size: 24px; margin-bottom: 10px; }
-        .status-box { padding: 15px; border-radius: 12px; font-size: 14px; margin: 20px 0; border: 1px solid #ddd; }
-        .approved { background: #e7fcf3; color: #00875a; border-color: #abf5d1; }
-        .pending { background: #fff9db; color: #856404; border-color: #ffeeba; }
-       .btn { display: block; background: #ffc1cc; color: #4a4a4a; padding: 15px; border-radius: 30px; text-decoration: none; font-weight: 600; margin-top: 15px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status do Pedido | Corujices</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f6f8ff;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+margin:0;
+padding:20px;
+position:relative;
+z-index:1;
+}
+
+/* FUNDO COM CORUJINHAS */
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+background-image:url("corujinhas-bg.png");
+background-repeat:repeat;
+background-size:200px;
+
+opacity:0.12;
+
+pointer-events:none;
+z-index:0;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+max-width:450px;
+width:100%;
+text-align:center;
+}
+
+.icon{
+font-size:60px;
+margin-bottom:20px;
+}
+
+h1{
+color:#f08080;
+font-size:24px;
+margin-bottom:10px;
+}
+
+.status-box{
+padding:15px;
+border-radius:12px;
+font-size:14px;
+margin:20px 0;
+border:1px solid #ddd;
+}
+
+.approved{
+background:#e7fcf3;
+color:#00875a;
+border-color:#abf5d1;
+}
+
+.pending{
+background:#fff9db;
+color:#856404;
+border-color:#ffeeba;
+}
+
+.btn{
+display:block;
+background:#ffc1cc;
+color:#4a4a4a;
+padding:15px;
+border-radius:30px;
+text-decoration:none;
+font-weight:600;
+margin-top:15px;
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="card">
-    <div id="loader">
-        <div class="icon">⏳</div>
-        <h1>Verificando...</h1>
-        <p>Estamos consultando o status do seu pagamento no Mercado Pago.</p>
-    </div>
 
-    <div id="resultado" style="display: none;">
-        <div id="status-icon" class="icon"></div>
-        <h1 id="status-title"></h1>
-        <div id="status-msg" class="status-box"></div>
-        
-        <a href="index.html" class="btn">Voltar para a Loja</a>
-        <a id="btn-suporte" href="mailto:aliciacosta15@hotmail.com?subject=Dúvida sobre meu pedido na Corujices" class="btn" style="background:#f08080; color:white; display:none;">📧 Suporte via E-mail</a>
-    </div>
+<div id="loader">
+<div class="icon">⏳</div>
+<h1>Verificando...</h1>
+<p>Estamos consultando o status do seu pagamento no Mercado Pago.</p>
+</div>
+
+<div id="resultado" style="display:none;">
+
+<div id="status-icon" class="icon"></div>
+<h1 id="status-title"></h1>
+
+<div id="status-msg" class="status-box"></div>
+
+<a href="index.html" class="btn">Voltar para a Loja</a>
+
+<a id="btn-suporte"
+href="mailto:aliciacosta15@hotmail.com?subject=Dúvida sobre meu pedido na Corujices"
+class="btn"
+style="background:#f08080;color:white;display:none;">
+📧 Suporte via E-mail
+</a>
+
+</div>
 </div>
 
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const paymentId = params.get('payment_id') || params.get('collection_id');
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec";
 
-    const loader = document.getElementById('loader');
-    const resultado = document.getElementById('resultado');
+const params = new URLSearchParams(window.location.search);
+const paymentId = params.get('payment_id') || params.get('collection_id');
 
-    async function verificarStatus() {
-        if (!paymentId) {
-            exibirPendente();
-            return;
-        }
+const scriptURL="https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec";
 
-        try {
-            // Pergunta ao Script o status real do pagamento
-            const response = await fetch(`${scriptURL}?action=checkStatus&paymentId=${paymentId}`);
-            const status = await response.text();
+const loader=document.getElementById('loader');
+const resultado=document.getElementById('resultado');
 
-            if (status === 'approved') {
-                exibirSucesso();
-            } else {
-                exibirPendente();
-            }
-        } catch (e) {
-            exibirPendente();
-        }
-    }
+async function verificarStatus(){
 
-    function exibirSucesso() {
-        loader.style.display = 'none';
-        resultado.style.display = 'block';
-        document.getElementById('status-icon').innerText = "✅";
-        document.getElementById('status-title').innerText = "Pagamento Confirmado!";
-        document.getElementById('status-msg').className = "status-box approved";
-        document.getElementById('status-msg').innerHTML = "<b>Tudo pronto!</b> O material foi enviado para o seu e-mail. Olhe também sua pasta de <b>Spam</b>.";
-        localStorage.clear();
-    }
+if(!paymentId){
+exibirPendente();
+return;
+}
 
-    function exibirPendente() {
-        loader.style.display = 'none';
-        resultado.style.display = 'block';
-        document.getElementById('status-icon').innerText = "⏳";
-        document.getElementById('status-title').innerText = "Aguardando Pix...";
-        document.getElementById('status-msg').className = "status-box pending";
-        document.getElementById('status-msg').innerHTML = "Ainda não detectamos a compensação. Se você já pagou, o material chegará no seu e-mail em até 5 minutos.";
-        document.getElementById('btn-suporte').style.display = "block";
-    }
+try{
 
-    verificarStatus();
+const response=await fetch(`${scriptURL}?action=checkStatus&paymentId=${paymentId}`);
+const status=await response.text();
+
+if(status==='approved'){
+exibirSucesso();
+}else{
+exibirPendente();
+}
+
+}catch(e){
+exibirPendente();
+}
+
+}
+
+function exibirSucesso(){
+
+loader.style.display='none';
+resultado.style.display='block';
+
+document.getElementById('status-icon').innerText="✅";
+document.getElementById('status-title').innerText="Pagamento Confirmado!";
+
+document.getElementById('status-msg').className="status-box approved";
+
+document.getElementById('status-msg').innerHTML="<b>Tudo pronto!</b> O material foi enviado para o seu e-mail. Olhe também sua pasta de <b>Spam</b>.";
+
+localStorage.clear();
+
+}
+
+function exibirPendente(){
+
+loader.style.display='none';
+resultado.style.display='block';
+
+document.getElementById('status-icon').innerText="⏳";
+document.getElementById('status-title').innerText="Aguardando Pix...";
+
+document.getElementById('status-msg').className="status-box pending";
+
+document.getElementById('status-msg').innerHTML="Ainda não detectamos a compensação. Se você já pagou, o material chegará no seu e-mail em até 5 minutos.";
+
+document.getElementById('btn-suporte').style.display="block";
+
+}
+
+verificarStatus();
+
 </script>
+
 </body>
 </html>
-
-
-
-
