@@ -898,5 +898,19 @@ onAuthStateChanged(auth, (user) => {
     <div class="img-modal" id="imgModal" onclick="fecharImagem()">
     <img id="imgExpandida">
 </div>
+
+    <div class="modal" id="modalDetalhes">
+    <div class="modal-content" style="max-width: 500px; text-align: left;">
+        <img id="detalhe-img" src="" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+        <h2 id="detalhe-nome" style="color: #F08080; margin-bottom: 10px;"></h2>
+        <p id="detalhe-desc" style="color: #666; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap;"></p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="detalhe-preco" style="font-size: 22px; font-weight: 700;"></span>
+            <button id="detalhe-btn-comprar" class="btn-buy" style="padding: 12px 30px;">ADQUIRIR AGORA</button>
+        </div>
+        <button onclick="fecharModalDetalhes()" style="width: 100%; background: none; border: none; margin-top: 20px; color: #999; cursor: pointer;">Voltar para a loja</button>
+    </div>
+</div>
+    
 </body>
 </html>
