@@ -736,35 +736,36 @@ contarVisita();
     });
 
     // 2. DESENHO DOS CARDS NA TELA
-    filtrados.forEach(m => {
-        const precoLimpo = m.preco ? m.preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".") : "0";
-        const valorNumerico = parseFloat(precoLimpo);
-        const ehRealmenteGratis = (valorNumerico === 0);
+   filtrados.forEach(m => {
+    const eGratis = (m.preco === "0,00" || m.preco === "0" || !m.preco);
+    const textoBotao = eGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
+    const corBotao = eGratis ? "#00b894" : "#F08080";
 
-        const textoBotao = ehRealmenteGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
-        const corBotao = ehRealmenteGratis ? "#00b894" : "#F08080";
+    vitrine.innerHTML += `
+        <div class="card">
+            <div class="admin-zone">
+                <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})' title="Editar">✏️</button>
+                <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')" title="Excluir">🗑️</button>
+            </div>
 
-        vitrine.innerHTML += `
-            <div class="card">
-                <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')" style="cursor:zoom-in;">
-                <div class="info">
-                    <small>${m.categoria}</small>
-                    <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="price">R$ ${m.preco}</span>
-                        <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
-                                class="btn-buy" 
-                                style="background-color: ${corBotao}">
-                            ${textoBotao}
-                        </button>
-                    </div>
+            <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')" style="cursor:zoom-in;">
+            
+            <div class="info">
+                <small>${m.categoria}</small>
+                <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+                <p style="font-size: 13px; color: #777; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+             ${m.descricao || ""}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="price">R$ ${m.preco}</span>
+                    <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
+                            class="btn-buy" 
+                            style="background-color: ${corBotao}">
+                        ${textoBotao}
+                    </button>
                 </div>
-                <div class="admin-zone">
-                    <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-                    <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-                </div>
-            </div>`;
-    });
+            </div>
+        </div>`;
+});
 }
 
    // --- MONITORAMENTO CORRIGIDO ---
