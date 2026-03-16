@@ -299,31 +299,31 @@ transform:scale(1.05);
 
 /* MODAL */
 
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-justify-content:center;
-align-items:center;
-z-index:2000;
-backdrop-filter:blur(6px);
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: flex-start; /* Alinha o conteúdo no topo para permitir rolar */
+    z-index: 2000;
+    backdrop-filter: blur(6px);
+    overflow-y: auto; /* PERMITE ROLAR O MODAL */
+    padding: 20px 0; /* Espaço para o modal não encostar nas bordas */
 }
 
-.modal-content{
-background:white;
-padding:40px;
-width:95%;
-max-width:450px;
-border-radius:18px;
-position:relative;
-text-align:center;
-box-shadow:0 20px 40px rgba(0,0,0,0.2);
+.modal-content {
+    background: white;
+    padding: 30px;
+    width: 95%;
+    max-width: 500px;
+    border-radius: 18px;
+    position: relative;
+    margin: auto; /* Centraliza o card branco no meio do scroll */
 }
-
 /* INPUTS */
 
 input,
@@ -773,28 +773,43 @@ vitrine.innerHTML += `
 });
 }
 
-    window.abrirDetalhes = (id) => {
-    // Busca o material específico pelo ID
+   window.abrirDetalhes = (id) => {
+    // 1. Busca o material específico pelo ID
     const m = materiaisGeral.find(item => item.id === id);
     if (!m) return;
 
-    // Preenche os dados no modal
+    // 2. Preenche os dados no modal de detalhes
     document.getElementById('detalhe-img').src = m.imagem;
     document.getElementById('detalhe-nome').innerText = m.nome;
     document.getElementById('detalhe-desc').innerText = m.descricao || "Sem descrição disponível.";
     document.getElementById('detalhe-preco').innerText = "R$ " + m.preco;
 
-    // Ajusta o botão de compra dentro do modal
+    // 3. Ajusta o botão de compra dentro do modal (Texto e Cor)
     const btnCompra = document.getElementById('detalhe-btn-comprar');
-    const eGratis = (m.preco === "0,00" || m.preco === "0");
+    
+    // Limpamos o preço para o JavaScript entender como número
+    const precoLimpo = m.preco ? m.preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".") : "0";
+    const valorNumerico = parseFloat(precoLimpo);
+    const eGratis = (valorNumerico === 0);
+
     btnCompra.innerText = eGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR AGORA";
     btnCompra.style.backgroundColor = eGratis ? "#00b894" : "#F08080";
+    
+    // 4. Configura a ação do clique no botão de compra do modal
     btnCompra.onclick = () => {
         fecharModalDetalhes();
         prepararCompra(m.pdfUrl, m.nome, m.preco);
     };
 
+    // 5. Exibe o modal e TRAVA o scroll do site ao fundo
     document.getElementById('modalDetalhes').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; 
+};
+
+// Aproveite e atualize também a função de fechar para liberar o scroll:
+window.fecharModalDetalhes = () => {
+    document.getElementById('modalDetalhes').style.display = 'none';
+    document.body.style.overflow = 'auto'; // LIBERA o scroll do site
 };
 
 window.fecharModalDetalhes = () => {
