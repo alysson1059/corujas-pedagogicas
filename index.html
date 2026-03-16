@@ -992,24 +992,18 @@ window.limparAvisoPendente = (event) => {
 window.abrirRelatorio = async () => {
     const dataHoje = getDataBrasilia(); 
     
-    // 1. Busca os dados do Realtime Database (Geral e Hoje)
-    // Fazemos dois pedidos: um para o total e outro para a pasta da data de hoje
-    const [resGeral, resHoje] = await Promise.all([
-        fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json").then(r => r.json()),
-        fetch(`https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/${dataHoje}.json`).then(r => r.json())
-    ]);
+    // 1. Busca APENAS os "Pagos" no Realtime (já que o Google Script manda pra lá)
+    const resRealtime = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
+    const dRealtime = await resRealtime.json() || {};
     
-    const dRealtimeGeral = resGeral || {};
-    const dRealtimeHoje = resHoje || {};
-    
-    // 2. Busca os dados do Firestore (Visitas e Grátis)
+    // 2. Busca TUDO o resto no Firestore (onde vimos que os dados estão no seu print!)
     const [snapGeral, snapHoje] = await Promise.all([
         getDoc(doc(db, "estatisticas", "geral")),
         getDoc(doc(db, "estatisticas", dataHoje))
     ]);
     
-    const dFirestoreGeral = snapGeral.exists() ? snapGeral.data() : {};
-    const dFirestoreHoje = snapHoje.exists() ? snapHoje.data() : {};
+    const dGeral = snapGeral.exists() ? snapGeral.data() : {};
+    const dHoje = snapHoje.exists() ? snapHoje.data() : {};
 
     const statsContent = document.getElementById('stats-content');
     
@@ -1025,29 +1019,26 @@ window.abrirRelatorio = async () => {
             <tbody>
                 <tr>
                     <td style="padding:10px 0;">👁️ Visitas</td>
-                    <td>${dFirestoreHoje.visitas || 0}</td>
-                    <td>${dFirestoreGeral.visitas || 0}</td>
+                    <td>${dHoje.visitas || 0}</td>
+                    <td>${dGeral.visitas || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0;">🎁 Grátis</td>
-                    <td>${dFirestoreHoje.gratis || 0}</td>
-                    <td>${dFirestoreGeral.gratis || 0}</td>
+                    <td>${dHoje.gratis || 0}</td>
+                    <td>${dGeral.gratis || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0; color:#f1c40f;">⏳ Pendentes</td>
-                    <td>${dRealtimeHoje.pendentes || 0}</td> 
-                    <td>${dRealtimeGeral.pendentes || 0}</td>
+                    <td>${dHoje.pendentes || 0}</td> 
+                    <td>${dGeral.pendentes || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0; color:#2ecc71; font-weight:bold;">💰 Pagos</td>
-                    <td>${dRealtimeHoje.pagos || 0}</td> 
-                    <td style="font-weight:bold; color:#2ecc71;">${dRealtimeGeral.pagos || 0}</td>
+                    <td>--</td> 
+                    <td style="font-weight:bold; color:#2ecc71;">${dRealtime.pagos || 0}</td>
                 </tr>
             </tbody>
         </table>
-        <p style="font-size:10px; color:#999; margin-top:15px; text-align:center;">
-            Virada do dia: 00:00 (Brasília)
-        </p>
     `;
 
     document.getElementById('modalRelatorio').style.display = 'flex';
