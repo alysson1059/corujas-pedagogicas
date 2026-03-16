@@ -753,26 +753,37 @@ contarVisita();
 }
 
    // --- MONITORAMENTO CORRIGIDO ---
+// --- MONITORAMENTO COM DESTAQUE DE CATEGORIA ---
 onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
     materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
     
-    // Pegamos todas as categorias extras, ignorando as fixas
+    // Pegamos as categorias extras criadas por você, ignorando as fixas
     const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))]
-        .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Geral");
+        .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Todos");
     
-    // Montamos a lista: Todos primeiro, depois as fixas, depois as do usuário
+    // Montamos a lista final de botões
     const cats = ["Todos", "Grátis", "Arquivos Pagos", ...outrasCategorias];
     
     const menu = document.getElementById("menuCategorias");
     if (menu) {
         menu.innerHTML = "";
         cats.forEach(c => {
-            // A COR SÓ MUDA SE c FOR IGUAL A categoriaAtual
+            // AQUI ESTÁ A LÓGICA DA COR:
+            // Se a categoria do botão for a que está selecionada (categoriaAtual), 
+            // ela ganha a cor Salmão (#F08080). Se não, fica cinza (#eee).
             const ehAtiva = (categoriaAtual === c);
-            const bg = ehAtiva ? '#F08080' : '#eee';
+            const corFundo = ehAtiva ? '#F08080' : '#eee';
             const corTexto = ehAtiva ? 'white' : '#666';
 
-            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${bg}; color:${corTexto}; cursor:pointer; font-weight:${ehAtiva?'700':'400'}" onclick="filtrarCategoria('${c}')">${c}</button>`;
+            menu.innerHTML += `
+                <button style="margin:5px; padding:8px 18px; border-radius:25px; border:none; 
+                        background-color: ${corFundo}; 
+                        color: ${corTexto}; 
+                        font-weight: ${ehAtiva ? '700' : '400'}; 
+                        cursor:pointer; transition: 0.3s;" 
+                        onclick="filtrarCategoria('${c}')">
+                    ${c}
+                </button>`;
         });
     }
     renderizar();
