@@ -924,29 +924,23 @@ window.limparAvisoPendente = (event) => {
     }
 };
 
-  window.abrirRelatorio = async () => {
-     const dataHoje = getDataBrasilia(); // Usei 'dataHoje' para não confundir com o nome da função
-    
-    const [snapGeral, snapHoje] = await Promise.all([
-        getDoc(doc(db, "estatisticas", "geral")),
-        getDoc(doc(db, "estatisticas", dataHoje)) // <-- Usando aqui
-    ]);
+ window.abrirRelatorio = async () => {
+    const dataHoje = getDataBrasilia(); 
     
     // 1. Busca Pagos e Pendentes TOTAIS (Realtime Database - Google Script)
     const response = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
     const dadosRealtime = await response.json() || {};
     
-    // 2. Busca Visitas e Grátis TOTAIS (Firestore)
-    const snapGeral = await getDoc(doc(db, "estatisticas", "geral"));
-    const dGeral = snapGeral.exists() ? snapGeral.data() : {};
+    // 2. Busca os dados do Firestore (Geral e Hoje) usando a função global
+    const [snapGeral, snapHoje] = await Promise.all([
+        getDoc(doc(db, "estatisticas", "geral")),
+        getDoc(doc(db, "estatisticas", dataHoje))
+    ]);
     
-    // 3. Busca os dados de HOJE (Firestore)
-    const snapHoje = await getDoc(doc(db, "estatisticas", hoje));
+    const dGeral = snapGeral.exists() ? snapGeral.data() : {};
     const dHoje = snapHoje.exists() ? snapHoje.data() : {};
 
-    // 4. Monta a tabela com as duas colunas
-    const tabelaBody = document.getElementById('stats-table-body');
-    // Caso ainda não tenha a tabela no HTML, vamos garantir que o conteúdo entre certo
+    // 3. Monta a tabela com as duas colunas
     const statsContent = document.getElementById('stats-content');
     
     statsContent.innerHTML = `
