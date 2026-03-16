@@ -992,18 +992,24 @@ window.limparAvisoPendente = (event) => {
 window.abrirRelatorio = async () => {
     const dataHoje = getDataBrasilia(); 
     
-    // 1. Busca os dados de Pagos/Pendentes no banco antigo (Realtime)
-    const resRealtime = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
-    const dRealtime = await resRealtime.json() || {};
+    // 1. Busca os dados do Realtime Database (Geral e Hoje)
+    // Fazemos dois pedidos: um para o total e outro para a pasta da data de hoje
+    const [resGeral, resHoje] = await Promise.all([
+        fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json").then(r => r.json()),
+        fetch(`https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/${dataHoje}.json`).then(r => r.json())
+    ]);
     
-    // 2. Busca os dados do Firestore (Geral e Hoje)
+    const dRealtimeGeral = resGeral || {};
+    const dRealtimeHoje = resHoje || {};
+    
+    // 2. Busca os dados do Firestore (Visitas e Grátis)
     const [snapGeral, snapHoje] = await Promise.all([
         getDoc(doc(db, "estatisticas", "geral")),
         getDoc(doc(db, "estatisticas", dataHoje))
     ]);
     
-    const dGeral = snapGeral.exists() ? snapGeral.data() : {};
-    const dHoje = snapHoje.exists() ? snapHoje.data() : {};
+    const dFirestoreGeral = snapGeral.exists() ? snapGeral.data() : {};
+    const dFirestoreHoje = snapHoje.exists() ? snapHoje.data() : {};
 
     const statsContent = document.getElementById('stats-content');
     
@@ -1019,23 +1025,23 @@ window.abrirRelatorio = async () => {
             <tbody>
                 <tr>
                     <td style="padding:10px 0;">👁️ Visitas</td>
-                    <td>${dHoje.visitas || 0}</td>
-                    <td>${dGeral.visitas || 0}</td>
+                    <td>${dFirestoreHoje.visitas || 0}</td>
+                    <td>${dFirestoreGeral.visitas || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0;">🎁 Grátis</td>
-                    <td>${dHoje.gratis || 0}</td>
-                    <td>${dGeral.gratis || 0}</td>
+                    <td>${dFirestoreHoje.gratis || 0}</td>
+                    <td>${dFirestoreGeral.gratis || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0; color:#f1c40f;">⏳ Pendentes</td>
-                    <td>--</td> 
-                    <td>${dRealtime.pendentes || 0}</td>
+                    <td>${dRealtimeHoje.pendentes || 0}</td> 
+                    <td>${dRealtimeGeral.pendentes || 0}</td>
                 </tr>
                 <tr>
                     <td style="padding:10px 0; color:#2ecc71; font-weight:bold;">💰 Pagos</td>
-                    <td>--</td> 
-                    <td style="font-weight:bold; color:#2ecc71;">${dRealtime.pagos || 0}</td>
+                    <td>${dRealtimeHoje.pagos || 0}</td> 
+                    <td style="font-weight:bold; color:#2ecc71;">${dRealtimeGeral.pagos || 0}</td>
                 </tr>
             </tbody>
         </table>
