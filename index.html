@@ -653,30 +653,30 @@ contarVisita();
 
     window.fecharModalCadastro = () => document.getElementById('modalCadastro').style.display = 'none';
 
-   window.salvarMaterial = async () => {
+  window.salvarMaterial = async () => {
     const btn = document.getElementById('btnPublicar');
     btn.innerText = "Salvando...";
     const id = document.getElementById('editId').value;
     const preco = document.getElementById('precoMat').value;
+    
+    // Pegamos a categoria que você digitou/escolheu
     let categoriaInformada = document.getElementById('novaCat').value.trim();
 
-    // LÓGICA AUTOMÁTICA DE CATEGORIA
-    if (preco === "0,00" || preco === "0" || !preco) {
-        categoriaInformada = "Grátis";
-    } else if (categoriaInformada === "Grátis") {
-        // Se tem preço mas a categoria era Grátis, muda para Pago
-        categoriaInformada = "Arquivos Pagos";
+    // REMOVEMOS aquela trava que forçava "Grátis"
+    // Agora, se você não digitar nada, ele vira "Geral"
+    if (!categoriaInformada) {
+        categoriaInformada = (preco === "0,00" || preco === "0") ? "Grátis" : "Geral";
     }
 
     let dados = {
         nome: document.getElementById('nomeMat').value,
         descricao: document.getElementById('descMat').value,
         preco: preco,
-        categoria: categoriaInformada || "Geral",
+        categoria: categoriaInformada, // Agora ele aceita o que você digitar!
         data: new Date()
     };
 
-    // ... (Mantenha o código de upload de imagem e PDF que você já tem)
+    // ... (restante do código de upload de imagem e PDF permanece igual)
     const fileImg = document.getElementById('fileImg').files[0];
     const filePdf = document.getElementById('filePdf').files[0];
 
@@ -854,7 +854,7 @@ window.renderizarMenu = () => {
 };
 
 // --- MONITORAMENTO DO FIREBASE ---
-onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+onSnapshot(query(collection(db, "materiais"), orderBy("nome", "asc")), (snap) => {
     materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
     renderizarMenu(); // Desenha o menu com as cores certas
     renderizar();     // Desenha os cards
