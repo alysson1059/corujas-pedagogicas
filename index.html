@@ -503,10 +503,27 @@ display:flex;
 <div class="modal" id="modalEmail">
     <div class="modal-content">
         <h2 style="margin-bottom:15px;">Quase lá! 🦉</h2>
-        <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material?</p>
-        <input type="email" id="emailCliente" placeholder="Seu melhor e-mail" required>
-        <button id="btnConfirmarEmail" class="btn-buy" style="width:100%;">IR PARA O PAGAMENTO</button>
-        <p style="font-size:11px; color:#999; margin-top:15px; cursor:pointer;" onclick="fecharModalEmail()">Cancelar</p>
+        
+        <div id="passo-email">
+            <p style="margin-bottom:20px; color:#666;">Para onde devemos enviar o seu material?</p>
+            <input type="email" id="emailCliente" placeholder="Seu melhor e-mail" required>
+            <button onclick="verificarEmail()" class="btn-buy" style="width:100%;">CONTINUAR</button>
+        </div>
+
+        <div id="passo-confirmacao" style="display:none;">
+            <p style="margin-bottom:10px; color:#333; font-weight:bold;">O e-mail abaixo está correto?</p>
+            <p id="email-digitado" style="background:#f0f0f0; padding:10px; border-radius:8px; color:#F08080; font-weight:bold; margin-bottom:20px;"></p>
+            
+            <div style="background:#fff4f4; padding:15px; border-radius:10px; border:1px solid #ffdbdb; margin-bottom:20px; text-align:left; font-size:13px;">
+                <p style="color:#d63031; font-weight:bold; margin-bottom:5px;">⚠️ ATENÇÃO - PAGAMENTO VIA PIX:</p>
+                <p style="color:#636e72;">Ao finalizar o pagamento, clique no botão <b>"Voltar para Corujices Pedagógicas"</b> para receber seu material na hora.</p>
+            </div>
+
+            <button id="btnConfirmarEmail" class="btn-buy" style="width:100%;">TUDO CERTO, IR PARA PAGAMENTO</button>
+            <p onclick="voltarPassoEmail()" style="color:#999; font-size:12px; margin-top:15px; cursor:pointer;">Não, quero corrigir o e-mail</p>
+        </div>
+
+        <p id="btn-cancelar-modal" style="font-size:11px; color:#999; margin-top:15px; cursor:pointer;" onclick="fecharModalEmail()">Cancelar</p>
     </div>
 </div>
 
@@ -585,54 +602,59 @@ contarVisita();
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
 
- window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
-    // 1. Limpamos o preço corretamente (remove R$, pontos e troca vírgula por ponto)
+ // Funções de controle do Modal de E-mail
+window.verificarEmail = () => {
+    const email = document.getElementById('emailCliente').value;
+    if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
+    
+    document.getElementById('email-digitado').innerText = email;
+    document.getElementById('passo-email').style.display = 'none';
+    document.getElementById('passo-confirmacao').style.display = 'block';
+    document.getElementById('btn-cancelar-modal').style.display = 'none';
+};
+
+window.voltarPassoEmail = () => {
+    document.getElementById('passo-email').style.display = 'block';
+    document.getElementById('passo-confirmacao').style.display = 'none';
+    document.getElementById('btn-cancelar-modal').style.display = 'block';
+};
+
+window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
     const precoLimpo = preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".");
     const valorNumerico = parseFloat(precoLimpo);
     
     // --- LÓGICA PARA MATERIAL GRÁTIS ---
     if (valorNumerico === 0) {
-
         await updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
-    await setDoc(doc(db, "estatisticas", getDataBrasilia()), { gratis: increment(1) }, { merge: true });
-        
-       
+        await setDoc(doc(db, "estatisticas", getDataBrasilia()), { gratis: increment(1) }, { merge: true });
         
         alert("🦉 Preparando seu download gratuito...");
-
-        // MÉTODO COMPATÍVEL COM IPHONE/SAFARI:
-        // Criamos um link "invisível", clicamos nele e removemos.
         const link = document.createElement('a');
         link.href = pdfUrl;
         link.target = '_blank';
-        link.download = nomeItem + ".pdf"; // Sugere o nome do arquivo ao baixar
-        
+        link.download = nomeItem + ".pdf";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        return; // Para a execução aqui
+        return;
     }
 
     // --- LÓGICA PARA MATERIAL PAGO ---
+    // Reseta o modal para o passo 1 sempre que abrir
+    voltarPassoEmail();
     document.getElementById('modalEmail').style.display = 'flex';
     
     document.getElementById('btnConfirmarEmail').onclick = async () => {
         const email = document.getElementById('emailCliente').value;
-        if (!email || !email.includes('@')) return alert("Digite um e-mail válido!");
-
-        // Soma +1 em 'pendentes' no Firebase
-        await updateDoc(statsRef, { pendentes: increment(1) });
-
         const btn = document.getElementById('btnConfirmarEmail');
+        
         btn.innerText = "Gerando Pagamento...";
         btn.disabled = true;
 
-        // Salva os dados localmente por segurança
+        await updateDoc(statsRef, { pendentes: increment(1) });
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
-        // Envio para o seu Google Apps Script (Mercado Pago + Brevo)
         const scriptURL = "https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec"; 
         const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
 
@@ -642,16 +664,10 @@ contarVisita();
                 if (linkOficial.includes("http")) { 
                     window.location.href = linkOficial; 
                 } else {
-                    alert("Erro ao gerar link de pagamento. Tente novamente.");
-                    btn.innerText = "IR PARA O PAGAMENTO";
+                    alert("Erro ao gerar link de pagamento.");
+                    btn.innerText = "TUDO CERTO, IR PARA PAGAMENTO";
                     btn.disabled = false;
                 }
-            })
-            .catch(err => {
-                console.error("Erro no fetch:", err);
-                alert("Houve um problema na conexão.");
-                btn.innerText = "IR PARA O PAGAMENTO";
-                btn.disabled = false;
             });
     };
 };
