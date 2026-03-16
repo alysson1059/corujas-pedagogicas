@@ -224,6 +224,7 @@ gap:28px;
 /* CARD PRODUTO */
 
 .card{
+position: relative;
 background:white;
 border-radius:16px;
 overflow:hidden;
@@ -345,29 +346,39 @@ outline:none;
 /* Esconde por padrão */
 /* Esconde para todo mundo por padrão */
 .admin-zone {
-    display: none !important;
-    padding: 12px 15px;
-    background: #fafafa;
-    border-top: 1px solid #eee;
+    display: none !important; /* Esconde por padrão */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
     justify-content: space-between;
+    z-index: 10;
+    pointer-events: none; /* Deixa o clique passar para a imagem se não clicar no botão */
 }
 
-/* MOSTRA APENAS SE O BODY TIVER A CLASSE DE ADMIN */
 body.admin-logado .admin-zone {
     display: flex !important;
 }
 
-.btn-adm{
-font-size:11px;
-cursor:pointer;
-font-weight:700;
-border:none;
-background:none;
-color:#636e72;
+.btn-adm {
+    pointer-events: auto; /* Reativa o clique nos botões */
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 16px;
+    transition: 0.3s;
 }
 
-.btn-adm:hover{
-color:#F08080;
+.btn-adm:hover {
+    transform: scale(1.1);
+    background: white;
 }
 
 /* AVISO DOWNLOAD */
