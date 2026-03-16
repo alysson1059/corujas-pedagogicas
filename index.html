@@ -1033,10 +1033,9 @@ window.abrirRelatorio = async () => {
                     <td>${dGeral.pendentes || 0}</td>
                 </tr>
                 <tr>
-                    <td style="padding:10px 0; color:#2ecc71; font-weight:bold;">💰 Vendas Concluídas</td>
-                    <td>--</td> 
-                    <td style="font-weight:bold; color:#2ecc71;">${dRealtime.pagos || 0}</td>
-                </tr>
+    <td style="padding:10px 0; color:#2ecc71; font-weight:bold;">💰 Vendas Concluídas</td>
+    <td>${dRealtimeHoje.pagos || 0}</td> <td style="font-weight:bold; color:#2ecc71;">${dRealtimeGeral.pagos || 0}</td>
+</tr>
             </tbody>
         </table>
     `;
