@@ -8,6 +8,21 @@
    
     <style>
 
+        .coruja-viva {
+    height: 48px;
+    width: auto;
+    /* A animação dura 3 segundos e repete para sempre */
+    animation: piscarSimples 3s infinite step-end;
+}
+
+@keyframes piscarSimples {
+    0%, 90% { content: url("coruja-aberta.png"); }   /* 90% do tempo aberta */
+    92%     { content: url("coruja-meia.png"); }     /* Um tiquinho semicerrada */
+    95%     { content: url("coruja-fechada.png"); }  /* Um tiquinho fechada */
+    98%     { content: url("coruja-meia.png"); }     /* Voltando a abrir */
+}
+        
+
          /* Botão flutuante do Relatório */
 #admin-dashboard-btn {
     position: fixed;
@@ -452,10 +467,10 @@ display:flex;
 </div>
 
 <header>
-    <a href="index.html" class="logo">
-        <img src="coruja.png">
-        <h1>Corujices Pedagógicas</h1>
-    </a>
+   <a href="index.html" class="logo">
+    <img src="coruja-aberta.png" class="coruja-viva">
+    <h1>Corujices Pedagógicas</h1>
+</a>
 
     <div class="menu" style="display: flex; align-items: center; gap: 15px;">
         <a href="https://www.instagram.com/corujices_pedagogicas_/" target="_blank" class="btn-instagram" title="Siga-nos no Instagram">
