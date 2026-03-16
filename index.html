@@ -646,19 +646,24 @@ window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
     voltarPassoEmail();
     document.getElementById('modalEmail').style.display = 'flex';
     
-   document.getElementById('btnConfirmarEmail').onclick = async () => {
+    document.getElementById('btnConfirmarEmail').onclick = async () => {
         const email = document.getElementById('emailCliente').value;
         const btn = document.getElementById('btnConfirmarEmail');
+        const hoje = getDataBrasilia(); // Pega a data de Brasília para o relatório diário
         
         btn.innerText = "Gerando Pagamento...";
         btn.disabled = true;
 
-        // --- ADICIONE ESTA LINHA ABAIXO PARA O RELATÓRIO CONTAR ---
+        // --- REGISTRO DE VENDA PENDENTE (O que faz o relatório subir) ---
+        // 1. Soma no total acumulado (Geral)
         await updateDoc(statsRef, { pendentes: increment(1) });
+        // 2. Soma ou cria o registro do dia de hoje no Firestore
+        await setDoc(doc(db, "estatisticas", hoje), { pendentes: increment(1) }, { merge: true });
 
         localStorage.setItem('email_cliente', email);
         localStorage.setItem('pdf_pendente', pdfUrl);
 
+        // Link do seu Google Apps Script (Mercado Pago)
         const scriptURL = "https://script.google.com/macros/s/AKfycbzr8QFZXory7JFP-_B1tS47NsKjKlcK3tcgNk76qStkIVO4cmtDi9IkojDhlSNxKHA/exec"; 
         const params = `?action=checkout&email=${encodeURIComponent(email)}&preco=${encodeURIComponent(preco)}&nome=${encodeURIComponent(nomeItem)}&pdfUrl=${encodeURIComponent(pdfUrl)}`;
 
@@ -672,6 +677,12 @@ window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
                     btn.innerText = "TUDO CERTO, IR PARA PAGAMENTO";
                     btn.disabled = false;
                 }
+            })
+            .catch(err => {
+                console.error("Erro no fetch:", err);
+                alert("Houve um problema na conexão.");
+                btn.innerText = "TUDO CERTO, IR PARA PAGAMENTO";
+                btn.disabled = false;
             });
     };
 };
