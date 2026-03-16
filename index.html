@@ -685,7 +685,11 @@ contarVisita();
 };
 
     window.excluirMaterial = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "materiais", id)); };
-    window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
+   window.filtrarCategoria = (c) => { 
+    categoriaAtual = c; 
+    renderizar(); 
+    renderizarMenu(); // Isso força o menu a mudar de cor na hora
+};
     window.buscarMateriais = () => renderizar();
 
   function renderizar() {
@@ -754,39 +758,48 @@ contarVisita();
 
    // --- MONITORAMENTO CORRIGIDO ---
 // --- MONITORAMENTO COM DESTAQUE DE CATEGORIA ---
-onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
-    materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
-    
-    // Pegamos as categorias extras criadas por você, ignorando as fixas
+// --- FUNÇÃO PARA DESENHAR O MENU DE CATEGORIAS ---
+window.renderizarMenu = () => {
     const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))]
-        .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Todos");
+        .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Todos" && c !== "Geral");
     
-    // Montamos a lista final de botões
     const cats = ["Todos", "Grátis", "Arquivos Pagos", ...outrasCategorias];
-    
     const menu = document.getElementById("menuCategorias");
+    
     if (menu) {
         menu.innerHTML = "";
         cats.forEach(c => {
-            // AQUI ESTÁ A LÓGICA DA COR:
-            // Se a categoria do botão for a que está selecionada (categoriaAtual), 
-            // ela ganha a cor Salmão (#F08080). Se não, fica cinza (#eee).
             const ehAtiva = (categoriaAtual === c);
-            const corFundo = ehAtiva ? '#F08080' : '#eee';
+            
+            // Cores e Efeito de Sombra
+            const bg = ehAtiva ? '#F08080' : '#eee';
             const corTexto = ehAtiva ? 'white' : '#666';
+            const sombra = ehAtiva ? '0 4px 12px rgba(240, 128, 128, 0.5)' : 'none';
+            const transform = ehAtiva ? 'scale(1.1)' : 'scale(1)';
 
             menu.innerHTML += `
-                <button style="margin:5px; padding:8px 18px; border-radius:25px; border:none; 
-                        background-color: ${corFundo}; 
-                        color: ${corTexto}; 
-                        font-weight: ${ehAtiva ? '700' : '400'}; 
-                        cursor:pointer; transition: 0.3s;" 
-                        onclick="filtrarCategoria('${c}')">
-                    ${c}
-                </button>`;
+                <button style="
+                    margin: 5px; 
+                    padding: 8px 20px; 
+                    border-radius: 25px; 
+                    border: none; 
+                    background: ${bg}; 
+                    color: ${corTexto}; 
+                    cursor: pointer; 
+                    font-weight: ${ehAtiva ? '700' : '400'};
+                    box-shadow: ${sombra};
+                    transform: ${transform};
+                    transition: all 0.3s ease;
+                " onclick="filtrarCategoria('${c}')">${c}</button>`;
         });
     }
-    renderizar();
+};
+
+// --- MONITORAMENTO DO FIREBASE ---
+onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+    materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    renderizarMenu(); // Desenha o menu com as cores certas
+    renderizar();     // Desenha os cards
 });
 
     window.mascaraPreco = (i) => {
