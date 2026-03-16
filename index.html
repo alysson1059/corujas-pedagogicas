@@ -516,14 +516,21 @@ display:flex;
 </div>
 
 <div class="modal" id="modalRelatorio">
-    <div class="modal-content" style="max-width:400px;">
+    <div class="modal-content" style="max-width:450px;">
         <h2 style="color:#F08080; margin-bottom:20px;">Relatório Corujices 🦉</h2>
-        <div id="stats-content" style="text-align:left;">
-            <p>👁️ <b>Visitas Totais:</b> <span id="stat-visitas">0</span></p>
-            <p>🎁 <b>Downloads Grátis:</b> <span id="stat-gratis">0</span></p>
-            <p>⏳ <b>Pagamentos Pendentes:</b> <span id="stat-pendentes">0</span></p>
-            <p>💰 <b>Vendas Concluídas:</b> <span id="stat-pagos">0</span></p>
-        </div>
+        
+        <table style="width:100%; text-align:left; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #eee;">
+                    <th>Métrica</th>
+                    <th>Hoje</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="stats-table-body">
+                </tbody>
+        </table>
+        
         <button onclick="fecharRelatorio()" class="btn-vendedor" style="width:100%; margin-top:20px;">Fechar</button>
     </div>
 </div>
@@ -564,8 +571,13 @@ display:flex;
 
     const statsRef = doc(db, "estatisticas", "geral");
 async function contarVisita() {
-    // Toda vez que alguém entra no site, soma +1 em visitas no Firebase
+    const hoje = new Date().toISOString().split('T')[0]; // Gera "2026-03-15"
+    const statsHojeRef = doc(db, "estatisticas", hoje);
+    
+    // Soma no Geral
     await setDoc(statsRef, { visitas: increment(1) }, { merge: true });
+    // Soma no de Hoje
+    await setDoc(statsHojeRef, { visitas: increment(1) }, { merge: true });
 }
 contarVisita();
 
@@ -579,8 +591,14 @@ contarVisita();
     
     // --- LÓGICA PARA MATERIAL GRÁTIS ---
     if (valorNumerico === 0) {
-        // Soma +1 no relatório de itens gratuitos do Firebase
-        await updateDoc(statsRef, { gratis: increment(1) });
+
+        const hoje = new Date().toISOString().split('T')[0];
+        // Soma no total acumulado
+        await updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
+        // Soma ou cria o registro do dia de hoje
+        await setDoc(doc(db, "estatisticas", hoje), { gratis: increment(1) }, { merge: true });
+        
+       
         
         alert("🦉 Preparando seu download gratuito...");
 
@@ -924,20 +942,22 @@ window.limparAvisoPendente = (event) => {
 };
 
    window.abrirRelatorio = async () => {
-    // 1. Busca Pagos e Pendentes do Realtime Database (Google Script)
-    const response = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
-    const dadosRealtime = await response.json() || {};
+    const hoje = new Date().toISOString().split('T')[0];
     
-    // 2. Busca Visitas e Grátis do Firestore (O que o site conta)
-    const statsRef = doc(db, "estatisticas", "geral");
-    const snap = await getDoc(statsRef);
-    const dadosFirestore = snap.exists() ? snap.data() : {};
+    // Busca Geral
+    const snapGeral = await getDoc(doc(db, "estatisticas", "geral"));
+    const dGeral = snapGeral.exists() ? snapGeral.data() : {};
     
-    // 3. Preenche o relatório misturando os dois
-    document.getElementById('stat-visitas').innerText = dadosFirestore.visitas || 0;
-    document.getElementById('stat-gratis').innerText = dadosFirestore.gratis || 0;
-    document.getElementById('stat-pendentes').innerText = dadosRealtime.pendentes || 0;
-    document.getElementById('stat-pagos').innerText = dadosRealtime.pagos || 0;
+    // Busca Hoje
+    const snapHoje = await getDoc(doc(db, "estatisticas", hoje));
+    const dHoje = snapHoje.exists() ? snapHoje.data() : {};
+
+    const tabela = document.getElementById('stats-table-body');
+    tabela.innerHTML = `
+        <tr><td>👁️ Visitas</td><td>${dHoje.visitas || 0}</td><td>${dGeral.visitas || 0}</td></tr>
+        <tr><td>🎁 Grátis</td><td>${dHoje.gratis || 0}</td><td>${dGeral.gratis || 0}</td></tr>
+        <tr><td>💰 Pagos</td><td>--</td><td>${dGeral.pagos || 0}</td></tr>
+    `;
 
     document.getElementById('modalRelatorio').style.display = 'flex';
 };
