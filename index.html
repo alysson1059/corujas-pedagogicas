@@ -560,12 +560,11 @@ display:flex;
 
     const statsRef = doc(db, "estatisticas", "geral");
 async function contarVisita() {
-    const hoje = new Date().toISOString().split('T')[0]; // Gera "2026-03-15"
+    // Agora vira exatamente à meia-noite de Brasília
+    const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
     const statsHojeRef = doc(db, "estatisticas", hoje);
     
-    // Soma no Geral
     await setDoc(statsRef, { visitas: increment(1) }, { merge: true });
-    // Soma no de Hoje
     await setDoc(statsHojeRef, { visitas: increment(1) }, { merge: true });
 }
 contarVisita();
@@ -581,10 +580,8 @@ contarVisita();
     // --- LÓGICA PARA MATERIAL GRÁTIS ---
     if (valorNumerico === 0) {
 
-        const hoje = new Date().toISOString().split('T')[0];
-        // Soma no total acumulado
+        const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
         await updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
-        // Soma ou cria o registro do dia de hoje
         await setDoc(doc(db, "estatisticas", hoje), { gratis: increment(1) }, { merge: true });
         
        
@@ -931,6 +928,7 @@ window.limparAvisoPendente = (event) => {
 };
 
   window.abrirRelatorio = async () => {
+      const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
     const hoje = new Date().toISOString().split('T')[0];
     
     // 1. Busca Pagos e Pendentes TOTAIS (Realtime Database - Google Script)
