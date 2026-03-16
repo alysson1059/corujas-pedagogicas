@@ -557,13 +557,11 @@ display:flex;
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
+    const getDataBrasilia = () => new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
 
     const statsRef = doc(db, "estatisticas", "geral");
 async function contarVisita() {
-    // Agora vira exatamente à meia-noite de Brasília
-    const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
-    const statsHojeRef = doc(db, "estatisticas", hoje);
-    
+    const statsHojeRef = doc(db, "estatisticas", getDataBrasilia()); // <-- Usando a função aqui
     await setDoc(statsRef, { visitas: increment(1) }, { merge: true });
     await setDoc(statsHojeRef, { visitas: increment(1) }, { merge: true });
 }
@@ -580,9 +578,8 @@ contarVisita();
     // --- LÓGICA PARA MATERIAL GRÁTIS ---
     if (valorNumerico === 0) {
 
-        const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
         await updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
-        await setDoc(doc(db, "estatisticas", hoje), { gratis: increment(1) }, { merge: true });
+    await setDoc(doc(db, "estatisticas", getDataBrasilia()), { gratis: increment(1) }, { merge: true });
         
        
         
@@ -928,8 +925,12 @@ window.limparAvisoPendente = (event) => {
 };
 
   window.abrirRelatorio = async () => {
-      const hoje = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Sao_Paulo'});
-    const hoje = new Date().toISOString().split('T')[0];
+     const dataHoje = getDataBrasilia(); // Usei 'dataHoje' para não confundir com o nome da função
+    
+    const [snapGeral, snapHoje] = await Promise.all([
+        getDoc(doc(db, "estatisticas", "geral")),
+        getDoc(doc(db, "estatisticas", dataHoje)) // <-- Usando aqui
+    ]);
     
     // 1. Busca Pagos e Pendentes TOTAIS (Realtime Database - Google Script)
     const response = await fetch("https://corujices-7d098-default-rtdb.firebaseio.com/estatisticas/geral.json");
