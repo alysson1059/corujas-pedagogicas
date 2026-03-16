@@ -601,6 +601,8 @@ contarVisita();
 
     let materiaisGeral = [];
     let categoriaAtual = "Todos";
+    let paginaAtual = 1; 
+    const itensPorPagina = 9;
 
  // Funções de controle do Modal de E-mail
 window.verificarEmail = () => {
@@ -760,81 +762,100 @@ window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
 };
 
     window.excluirMaterial = async (id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, "materiais", id)); };
-   window.filtrarCategoria = (c) => { 
+  window.filtrarCategoria = (c) => { 
     categoriaAtual = c; 
+    paginaAtual = 1; // Voltar para o início
     renderizar(); 
-    renderizarMenu(); // Isso força o menu a mudar de cor na hora
+    renderizarMenu();
 };
-    window.buscarMateriais = () => renderizar();
+    
+    window.buscarMateriais = () => {
+    paginaAtual = 1; // Voltar para o início
+    renderizar();
+};
 
   function renderizar() {
     const vitrine = document.getElementById("vitrine");
     if (!vitrine) return;
     const busca = document.getElementById("inputBusca").value.toLowerCase();
-    vitrine.innerHTML = "";
-
-    // 1. LÓGICA DE FILTRAGEM INTELIGENTE
+    
+    // 1. Filtra primeiro (como já fazíamos)
     const filtrados = materiaisGeral.filter(m => {
         const nomeMatches = m.nome.toLowerCase().includes(busca);
-        
-        // Limpamos o preço para o JavaScript entender como número (ex: "2,00" vira 2.0)
         const precoLimpo = m.preco ? m.preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".") : "0";
         const valorNumerico = parseFloat(precoLimpo);
         const ehGratis = (valorNumerico === 0);
 
-        // Filtro: Todos
         if (categoriaAtual === "Todos") return nomeMatches;
-        
-        // Filtro: Subcategoria Grátis
-        if (categoriaAtual === "Grátis") {
-            return nomeMatches && ehGratis;
-        }
-        
-        // Filtro: Subcategoria Arquivos Pagos
-        if (categoriaAtual === "Arquivos Pagos") {
-            return nomeMatches && !ehGratis;
-        }
-
-        // Filtro: Categorias específicas (Alfabetização, etc)
+        if (categoriaAtual === "Grátis") return nomeMatches && ehGratis;
+        if (categoriaAtual === "Arquivos Pagos") return nomeMatches && !ehGratis;
         return nomeMatches && m.categoria === categoriaAtual;
     });
 
-    // 2. DESENHO DOS CARDS NA TELA
-   filtrados.forEach(m => {
-    const eGratis = (m.preco === "0,00" || m.preco === "0" || !m.preco);
-    const textoBotao = eGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
-    const corBotao = eGratis ? "#00b894" : "#F08080";
+    // 2. Lógica de Paginação
+    const totalPaginas = Math.ceil(filtrados.length / itensPorPagina);
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+    const itensExibidos = filtrados.slice(inicio, fim);
 
-  // Dentro do seu filtrados.forEach na função renderizar:
-vitrine.innerHTML += `
-    <div class="card">
-        <div class="admin-zone">
-            <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})' title="Editar">✏️</button>
-            <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')" title="Excluir">🗑️</button>
-        </div>
+    vitrine.innerHTML = "";
 
-        <img src="${m.imagem}" onclick="abrirDetalhes('${m.id}')" style="cursor:pointer;">
-        
-        <div class="info">
-            <small>${m.categoria}</small>
-            <h3 style="font-size:15px; margin:5px 0 10px;">${m.nome}</h3>
-            
-            <p onclick="abrirDetalhes('${m.id}')" style="font-size: 12px; color: #F08080; cursor: pointer; font-weight: 600; margin-bottom: 12px;">
-                👁️ Ver detalhes do material
-            </p>
+    // 3. Desenha os Cards
+    itensExibidos.forEach(m => {
+        const eGratis = (m.preco === "0,00" || m.preco === "0" || !m.preco);
+        const textoBotao = eGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
+        const corBotao = eGratis ? "#00b894" : "#F08080";
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="price" style="font-size: 18px;">R$ ${m.preco}</span>
-                <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
-                        class="btn-buy" 
-                        style="background-color: ${corBotao}; padding: 8px 15px; font-size: 11px;">
-                    ${textoBotao}
-                </button>
-            </div>
-        </div>
-    </div>`;
-});
+        vitrine.innerHTML += `
+            <div class="card">
+                <div class="admin-zone">
+                    <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})' title="Editar">✏️</button>
+                    <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')" title="Excluir">🗑️</button>
+                </div>
+                <img src="${m.imagem}" onclick="abrirDetalhes('${m.id}')" style="cursor:pointer;">
+                <div class="info">
+                    <small>${m.categoria}</small>
+                    <h3>${m.nome}</h3>
+                    <p onclick="abrirDetalhes('${m.id}')" style="font-size: 12px; color: #F08080; cursor: pointer; font-weight: 600; margin-bottom: 12px;">
+                        👁️ Ver detalhes
+                    </p>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price">R$ ${m.preco}</span>
+                        <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
+                                class="btn-buy" style="background-color: ${corBotao};">
+                            ${textoBotao}
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    });
+
+    // 4. Cria os botões de Próximo/Anterior abaixo da vitrine
+    renderizarControlesPaginacao(totalPaginas);
 }
+
+// Função para criar os botões de navegação
+window.renderizarControlesPaginacao = (total) => {
+    let divPaginacao = document.getElementById("paginacao-controles");
+    if (!divPaginacao) {
+        divPaginacao = document.createElement("div");
+        divPaginacao.id = "paginacao-controles";
+        divPaginacao.style = "grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 30px;";
+        document.getElementById("vitrine").after(divPaginacao);
+    }
+
+    divPaginacao.innerHTML = `
+        <button onclick="mudarPagina(-1)" ${paginaAtual === 1 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''} class="btn-vendedor">Anterior</button>
+        <span style="font-weight:bold; color:#F08080;">Página ${paginaAtual} de ${total || 1}</span>
+        <button onclick="mudarPagina(1)" ${paginaAtual >= total ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''} class="btn-vendedor">Próximo</button>
+    `;
+};
+
+window.mudarPagina = (direcao) => {
+    paginaAtual += direcao;
+    renderizar();
+    window.scrollTo({ top: 500, behavior: 'smooth' }); // Sobe a tela para o topo da vitrine
+};
 
    window.abrirDetalhes = (id) => {
     // 1. Busca o material específico pelo ID
