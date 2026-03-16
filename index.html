@@ -688,57 +688,91 @@ contarVisita();
     window.filtrarCategoria = (c) => { categoriaAtual = c; renderizar(); };
     window.buscarMateriais = () => renderizar();
 
-    // --- RENDERIZAÇÃO ---
-    function renderizar() {
-        const vitrine = document.getElementById("vitrine");
-        if(!vitrine) return;
-        const busca = document.getElementById("inputBusca").value.toLowerCase();
-        vitrine.innerHTML = "";
-        const filtrados = materiaisGeral.filter(m => {
-            return (categoriaAtual === "Todos" || m.categoria === categoriaAtual) && m.nome.toLowerCase().includes(busca);
-        });
-       filtrados.forEach(m => {
-    // Lógica para definir o estilo e texto do botão baseado no preço
-    const eGratis = (m.preco === "0,00" || m.preco === "0" || !m.preco);
-    const textoBotao = eGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
-    const corBotao = eGratis ? "#00b894" : "#F08080"; // Verde para grátis, Salmão para pago
+  function renderizar() {
+    const vitrine = document.getElementById("vitrine");
+    if (!vitrine) return;
+    const busca = document.getElementById("inputBusca").value.toLowerCase();
+    vitrine.innerHTML = "";
 
-    vitrine.innerHTML += `
-        <div class="card">
-            <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')">
-            <div class="info">
-                <small>${m.categoria}</small>
-                <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span class="price">R$ ${m.preco}</span>
-                    <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
-                            class="btn-buy" 
-                            style="background-color: ${corBotao}">
-                        ${textoBotao}
-                    </button>
+    // 1. LÓGICA DE FILTRAGEM INTELIGENTE
+    const filtrados = materiaisGeral.filter(m => {
+        const nomeMatches = m.nome.toLowerCase().includes(busca);
+        
+        // Limpamos o preço para o JavaScript entender como número (ex: "2,00" vira 2.0)
+        const precoLimpo = m.preco ? m.preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".") : "0";
+        const valorNumerico = parseFloat(precoLimpo);
+        const ehGratis = (valorNumerico === 0);
+
+        // Filtro: Todos
+        if (categoriaAtual === "Todos") return nomeMatches;
+        
+        // Filtro: Subcategoria Grátis
+        if (categoriaAtual === "Grátis") {
+            return nomeMatches && ehGratis;
+        }
+        
+        // Filtro: Subcategoria Arquivos Pagos
+        if (categoriaAtual === "Arquivos Pagos") {
+            return nomeMatches && !ehGratis;
+        }
+
+        // Filtro: Categorias específicas (Alfabetização, etc)
+        return nomeMatches && m.categoria === categoriaAtual;
+    });
+
+    // 2. DESENHO DOS CARDS NA TELA
+    filtrados.forEach(m => {
+        const precoLimpo = m.preco ? m.preco.replace("R$ ", "").replace(/\./g, "").replace(",", ".") : "0";
+        const valorNumerico = parseFloat(precoLimpo);
+        const ehRealmenteGratis = (valorNumerico === 0);
+
+        const textoBotao = ehRealmenteGratis ? "BAIXAR GRÁTIS" : "ADQUIRIR";
+        const corBotao = ehRealmenteGratis ? "#00b894" : "#F08080";
+
+        vitrine.innerHTML += `
+            <div class="card">
+                <img src="${m.imagem}" onclick="abrirImagem('${m.imagem}')" style="cursor:zoom-in;">
+                <div class="info">
+                    <small>${m.categoria}</small>
+                    <h3 style="font-size:16px; margin:5px 0 15px;">${m.nome}</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price">R$ ${m.preco}</span>
+                        <button onclick="prepararCompra('${m.pdfUrl}', '${m.nome}', '${m.preco}')" 
+                                class="btn-buy" 
+                                style="background-color: ${corBotao}">
+                            ${textoBotao}
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="admin-zone">
-                <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
-                <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
-            </div>
-        </div>`;
-});
-    }
+                <div class="admin-zone">
+                    <button class="btn-adm" onclick='abrirModalCadastro(${JSON.stringify(m)})'>EDITAR</button>
+                    <button class="btn-adm" style="color:red" onclick="excluirMaterial('${m.id}')">EXCLUIR</button>
+                </div>
+            </div>`;
+    });
+}
 
-    // --- MONITORAMENTO ---
-    onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
+   // --- MONITORAMENTO CORRIGIDO ---
+onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
     materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
     
-    // CATEGORIAS FIXAS NO INÍCIO + AS OUTRAS QUE VOCÊ CRIAR
-    const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))].filter(c => c !== "Grátis" && c !== "Arquivos Pagos");
+    // Pegamos todas as categorias extras, ignorando as fixas
+    const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))]
+        .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Geral");
+    
+    // Montamos a lista: Todos primeiro, depois as fixas, depois as do usuário
     const cats = ["Todos", "Grátis", "Arquivos Pagos", ...outrasCategorias];
     
     const menu = document.getElementById("menuCategorias");
     if (menu) {
         menu.innerHTML = "";
         cats.forEach(c => {
-            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${categoriaAtual===c?'#F08080':'#eee'}; color:${categoriaAtual===c?'white':'#666'}; cursor:pointer" onclick="filtrarCategoria('${c}')">${c}</button>`;
+            // A COR SÓ MUDA SE c FOR IGUAL A categoriaAtual
+            const ehAtiva = (categoriaAtual === c);
+            const bg = ehAtiva ? '#F08080' : '#eee';
+            const corTexto = ehAtiva ? 'white' : '#666';
+
+            menu.innerHTML += `<button style="margin:5px; padding:8px 15px; border-radius:20px; border:none; background:${bg}; color:${corTexto}; cursor:pointer; font-weight:${ehAtiva?'700':'400'}" onclick="filtrarCategoria('${c}')">${c}</button>`;
         });
     }
     renderizar();
