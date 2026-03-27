@@ -626,18 +626,20 @@ window.prepararCompra = async (pdfUrl, nomeItem, preco) => {
     const valorNumerico = parseFloat(precoLimpo);
     
     // --- LÓGICA PARA MATERIAL GRÁTIS ---
-    if (valorNumerico === 0) {
-        // Registra as estatísticas no Firebase antes de abrir
-        await updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
-        await setDoc(doc(db, "estatisticas", getDataBrasilia()), { gratis: increment(1) }, { merge: true });
-        
-        // Mensagem amigável para o usuário
-        alert("🦉 Abrindo seu material... Para baixar no iPhone, use o ícone de compartilhar e selecione 'Salvar em Arquivos'.");
-        
-        // Abre o PDF diretamente em uma nova aba
-        // Isso ativa o visualizador nativo do navegador, resolvendo o problema do Safari
-        window.open(pdfUrl, '_blank');
-        
+ if (valorNumerico === 0) {
+        // 1. Abrimos a aba IMEDIATAMENTE (O Safari permite porque o clique acabou de acontecer)
+        const novaAba = window.open(pdfUrl, '_blank');
+
+        // 2. SÓ DEPOIS fazemos as estatísticas em "background"
+        // Usamos o .then para não travar o código com await antes da abertura
+        updateDoc(doc(db, "estatisticas", "geral"), { gratis: increment(1) });
+        setDoc(doc(db, "estatisticas", getDataBrasilia()), { gratis: increment(1) }, { merge: true });
+
+        // 3. Verificação de segurança: se o navegador bloqueou mesmo assim
+        if (!novaAba || novaAba.closed || typeof novaAba.closed === 'undefined') {
+            alert("🦉 O seu navegador bloqueou a abertura. Por favor, permita pop-ups para baixar o material.");
+        }
+
         return;
     }
 
