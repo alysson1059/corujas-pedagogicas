@@ -920,7 +920,7 @@ window.renderizarMenu = () => {
     const outrasCategorias = [...new Set(materiaisGeral.map(m => m.categoria))]
         .filter(c => c !== "Grátis" && c !== "Arquivos Pagos" && c !== "Todos" && c !== "Geral");
     
-    const cats = ["Todos", "Grátis", "Arquivos Pagos", ...outrasCategorias];
+    const cats = ["TODOS", "GRÁTIS", "ARQUIVOS PAGOS", ...outrasCategorias];
     const menu = document.getElementById("menuCategorias");
     
     if (menu) {
