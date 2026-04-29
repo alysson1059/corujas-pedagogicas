@@ -953,10 +953,10 @@ window.renderizarMenu = () => {
 };
 
 // --- MONITORAMENTO DO FIREBASE ---
-onSnapshot(query(collection(db, "materiais"), orderBy("nome", "asc")), (snap) => {
+onSnapshot(query(collection(db, "materiais"), orderBy("data", "desc")), (snap) => {
     materiaisGeral = snap.docs.map(d => ({id: d.id, ...d.data()}));
-    renderizarMenu(); // Desenha o menu com as cores certas
-    renderizar();     // Desenha os cards
+    renderizarMenu(); 
+    renderizar();     
 });
 
     window.mascaraPreco = (i) => {
